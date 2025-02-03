@@ -13,11 +13,13 @@ class Music extends Model
         'title',
         'artist_id',
         'genre_id',
+        'album_id',
         'file_url',
         'image_url',
         'duration',
-        'original_filename',  // Add the new field here
+        'original_filename',
         'is_published',
+        'download_counts'
     ];
 
     public function artist()
@@ -28,5 +30,10 @@ class Music extends Model
     public function genre()
     {
         return $this->belongsTo(Genre::class);
+    }
+
+    public function album()
+    {
+        return $this->belongsTo(Album::class);
     }
 }

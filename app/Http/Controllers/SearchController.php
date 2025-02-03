@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Album;
 use App\Models\Music;
 use App\Models\Artist;
 use App\Models\Genre;
@@ -30,9 +31,13 @@ class SearchController extends Controller
         // Perform the search on each model
         $results = [
             'musics' => Music::with(['artist', 'genre'])->where('title', 'like', "%$query%")->get(),
-            'artists' => Artist::where('name', 'like', "%$query%")->get(),
-            'genres' => Genre::where('name', 'like', "%$query%")->get(),
-            'blogs' => Blog::where('title', 'like', "%$query%")->get(),
+            'artists' => Artist::latest()->get(),
+            'genres' => Genre::latest()->get(),
+            'blogs' => Blog::latest()->get(),
+            'albums' => Album::latest()->get(),
+            // 'artists' => Artist::where('name', 'like', "%$query%")->get(),
+            // 'genres' => Genre::where('name', 'like', "%$query%")->get(),
+            // 'blogs' => Blog::where('title', 'like', "%$query%")->get(),
         ];
 
         return Inertia::render("Searches/Index", [
@@ -58,23 +63,6 @@ class SearchController extends Controller
             'prop' => $data
         ]);
     }
-
-    /**
-     * Provide search suggestions based on the input query.
-     */
-    // public function suggestions(Request $request)
-    // {
-    //     $query = $request->input('query');
-
-    //     $suggestions = Music::where('title', 'like', "%{$query}%")
-    //         ->pluck('title')
-    //         ->merge(Artist::where('name', 'like', "%{$query}%")->pluck('name'))
-    //         ->merge(Genre::where('name', 'like', "%{$query}%")->pluck('name'))
-    //         ->unique()
-    //         ->take(10);
-
-    //     return response()->json($suggestions);
-    // }
 
     public function suggestions(Request $request)
     {

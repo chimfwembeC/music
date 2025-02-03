@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Sun, Moon, Monitor, ChevronDown } from "lucide-react";
+import { Sun, Moon, Monitor, ChevronDown, MoonStar, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Get system preference
@@ -44,11 +44,15 @@ const DarkModeToggle = () => {
                 onClick={() => setOpen(!open)}
                 className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white"
             >
-                {theme === "dark" ? <Moon size={20} className="text-gray-700 dark:text-yellow-500" /> :
+                {theme === "dark" ? <Moon size={20} className="text-gray-500" /> :
                     theme === "light" ? <Sun size={20} className="text-yellow-500" /> :
                         <Monitor size={20} className="text-blue-500" />}
                 <span className="capitalize">{theme}</span>
-                <ChevronDown size={16} />
+                {open ? (
+                    <ChevronDown size={16} />
+                ) : (
+                    <ChevronUp size={16} />
+                )}
             </button>
 
             {/* Dropdown Menu */}
@@ -63,12 +67,6 @@ const DarkModeToggle = () => {
                     >
                         <ul className="py-2">
                             <li
-                                onClick={() => handleThemeChange("system")}
-                                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                            >
-                                <Monitor size={18} className="text-blue-500" /> System Default
-                            </li>
-                            <li
                                 onClick={() => handleThemeChange("light")}
                                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                             >
@@ -78,7 +76,13 @@ const DarkModeToggle = () => {
                                 onClick={() => handleThemeChange("dark")}
                                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                             >
-                                <Moon size={18} className="text-gray-700 dark:text-yellow-500" /> Dark Mode
+                                <MoonStar size={18} className="text-gray-700 dark:text-gray-500" /> Dark Mode
+                            </li>
+                            <li
+                                onClick={() => handleThemeChange("system")}
+                                className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                            >
+                                <Monitor size={18} className="text-blue-500" /> System Default
                             </li>
                         </ul>
                     </motion.div>

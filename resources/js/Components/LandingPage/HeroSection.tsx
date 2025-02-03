@@ -111,13 +111,13 @@ export default function HeroSection() {
                     </div>
 
                     {/* Right Column - Stats & Visual Elements */}
-                    <div className="relative">
+                    <div className="">
                         {/* Floating Music Notes Animation */}
-                        <div className="absolute inset-0 overflow-hidden">
+                        <div className="overflow-hidden">
                             {[...Array(5)].map((_, i) => (
                                 <motion.div
                                     key={i}
-                                    className="absolute text-purple-400/20"
+                                    className="absolute text-purple-500/50"
                                     initial={{ y: 0, x: Math.random() * 100 }}
                                     animate={{
                                         y: [-20, -120],
@@ -131,6 +131,31 @@ export default function HeroSection() {
                                     }}
                                 >
                                     <Music2 size={25} />
+                                </motion.div>
+                            ))}
+                        </div>
+
+
+
+                        {/* trending floating */}
+                        <div className="overflow-hidden">
+                            {[...Array(5)].map((_, i) => (
+                                <motion.div
+                                    key={i}
+                                    className="absolute text-purple-500/50"
+                                    initial={{ y: 0, x: Math.random() * 100 }}
+                                    animate={{
+                                        y: [-20, -120],
+                                        x: Math.sin(i) * 50,
+                                        opacity: [0, 1, 0],
+                                    }}
+                                    transition={{
+                                        duration: 3,
+                                        repeat: Infinity,
+                                        delay: i * 0.8,
+                                    }}
+                                >
+                                    <Headphones size={25} />
                                 </motion.div>
                             ))}
                         </div>

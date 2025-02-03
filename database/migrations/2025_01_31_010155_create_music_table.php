@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('title');
             $table->foreignId('artist_id')->constrained('artists')->onDelete('cascade');
             $table->foreignId('genre_id')->constrained('genres')->onDelete('cascade');
+            $table->foreignId('album_id')->nullable()->constrained('albums');
             $table->string('file_url');
             $table->string('image_url')->nullable();
+            $table->string('download_counts')->nullable()->default(0);
             $table->integer('duration');
             $table->boolean('is_published')->default(false);
             $table->timestamps();

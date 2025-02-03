@@ -70,6 +70,12 @@ function Music({ musics }: MusicPageProps) {
         handleDownload(music);  // Now we trigger handleDownload here
     };
 
+    const handleFinalDownload = (music: Music, downloadUrl: string) => {
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `${music.original_filename}.mp3`;
+        link.click();
+    }
     const handleDownload = async (music: Music) => {
         if (!music || downloadingMusicIds.includes(music.id)) return;
 
@@ -117,11 +123,8 @@ function Music({ musics }: MusicPageProps) {
                 if (done) {
                     const blob = new Blob(chunks);
                     const downloadUrl = URL.createObjectURL(blob);
+                    handleFinalDownload(music, downloadUrl);
 
-                    const link = document.createElement('a');
-                    link.href = downloadUrl;
-                    link.download = `${music.original_filename}.mp3`;
-                    link.click();
 
                     URL.revokeObjectURL(downloadUrl);
                     setDownloadingMusicIds((prev) => prev.filter(id => id !== music.id));
@@ -174,7 +177,7 @@ function Music({ musics }: MusicPageProps) {
 
     return (
         <GuestLayout title="Music">
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+            <div className="min-h-screen bg-gradient-to-br  dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 dark:text-white text-gray-600">
                 <div className="container mx-auto px-4 py-8">
                     <h1 className="text-3xl font-bold mb-6">Music</h1>
 
@@ -183,12 +186,12 @@ function Music({ musics }: MusicPageProps) {
                         <input
                             type="text"
                             placeholder="Search by title..."
-                            className="p-3 bg-gray-800 text-white rounded-md w-full md:w-1/2"
+                            className="p-3 bg-white border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-white rounded-md w-full md:w-1/2"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <select
-                            className="p-3 bg-gray-800 text-white rounded-md w-full md:w-1/4"
+                            className="p-3 bg-white border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-gray-600 rounded-md w-full md:w-1/4"
                             value={selectedGenre}
                             onChange={(e) => setSelectedGenre(e.target.value)}
                         >
@@ -204,7 +207,7 @@ function Music({ musics }: MusicPageProps) {
                             {displayedMusic.map((music) => (
                                 <motion.div
                                     key={music.id}
-                                    className="bg-gray-800/50 rounded-lg overflow-hidden hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
+                                    className="bg-white dark:bg-gray-800/50 rounded-lg overflow-hidden hover:bg-gray-300 dark:hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.5 }}
@@ -224,19 +227,19 @@ function Music({ musics }: MusicPageProps) {
                                         <div className="ml-4 flex-grow">
                                             <h3 className="text-xl font-semibold mb-2">{music.title}</h3>
                                             <div className="grid grid-cols-2 gap-4">
-                                                <div className="flex items-center text-gray-300">
+                                                <div className="flex items-center dark:text-gray-300">
                                                     <User className="w-4 h-4 mr-2" />
                                                     <span>{music.artist?.name}</span>
                                                 </div>
-                                                <div className="flex items-center text-gray-300">
+                                                <div className="flex items-center dark:text-gray-300">
                                                     <Tag className="w-4 h-4 mr-2" />
                                                     <span>{music.genre?.name}</span>
                                                 </div>
-                                                <div className="flex items-center text-gray-300">
+                                                <div className="flex items-center dark:text-gray-300">
                                                     <Clock className="w-4 h-4 mr-2" />
                                                     <span>{formatDuration(music.duration)}</span>
                                                 </div>
-                                                <div className="flex items-center text-gray-300">
+                                                <div className="flex items-center dark:text-gray-300">
                                                     <Calendar className="w-4 h-4 mr-2" />
                                                     <span>{new Date(music.created_at).toLocaleDateString()}</span>
                                                 </div>
@@ -245,7 +248,7 @@ function Music({ musics }: MusicPageProps) {
                                     </div>
 
                                     {/* Download, Share, Play Buttons */}
-                                    <div className="p-4 flex justify-between items-center bg-gray-700/50 rounded-b-lg">
+                                    <div className="p-4 flex justify-between items-center bg-gray-200/50 dark:bg-gray-700/50 rounded-b-lg">
                                         <button
                                             onClick={() => handleDownloadStart(music)}
                                             className="flex items-center px-4 py-2 bg-blue-600 rounded-lg text-white"
@@ -275,15 +278,15 @@ function Music({ musics }: MusicPageProps) {
                     {totalPages > 1 && (
                         <div className="flex justify-center mt-6 space-x-2">
                             <button
-                                className={`px-4 py-2 rounded-md ${currentPage === 1 || downloadingMusicIds.length > 0 ? 'bg-gray-700 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-500'}`}
+                                className={`px-4 py-2 rounded-md ${currentPage === 1 || downloadingMusicIds.length > 0 ? 'bg-gray-400/50 dark:bg-gray-600 hover:bg-gray-500 cursor-not-allowed' : 'bg-gray-400/50 dark:bg-gray-600 hover:bg-gray-500'}`}
                                 disabled={currentPage === 1 || downloadingMusicIds.length > 0}
                                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                             >
                                 Previous
                             </button>
-                            <span className="px-4 py-2 bg-gray-700 rounded-md">{currentPage} / {totalPages}</span>
+                            <span className="px-4 py-2 bg-gray-400/50 dark:bg-gray-600 rounded-md">{currentPage} / {totalPages}</span>
                             <button
-                                className={`px-4 py-2 rounded-md ${currentPage === totalPages || downloadingMusicIds.length > 0 ? 'bg-gray-700 cursor-not-allowed' : 'bg-gray-600 hover:bg-gray-500'}`}
+                                className={`px-4 py-2 rounded-md ${currentPage === totalPages || downloadingMusicIds.length > 0 ? 'bg-gray-300 dark:bg-gray-700  cursor-not-allowed' : 'bg-gray-400/50 dark:bg-gray-600 hover:bg-gray-500'}`}
                                 disabled={currentPage === totalPages || downloadingMusicIds.length > 0}
                                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                             >
@@ -296,7 +299,7 @@ function Music({ musics }: MusicPageProps) {
                 {/* Download Modal */}
                 {showModal && selectedMusic && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-                        <div className="bg-gray-800 p-6 rounded-lg w-80 text-center">
+                        <div className=" dark:bg-gray-800 bg-white p-6 rounded-lg w-80 text-center">
                             <h2 className="text-xl font-semibold mb-4">Downloading...</h2>
 
                             {/* File verification status */}

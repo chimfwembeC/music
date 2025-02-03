@@ -19,7 +19,7 @@ interface ArtistsPageProps {
 const ArtistsPage: React.FC<ArtistsPageProps> = ({ artists }) => {
     return (
         <GuestLayout title="Artists">
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+            <div className="min-h-screen bg-gradient-to-br  dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 dark:text-white text-gray-600">
                 <div className="container mx-auto px-4 py-8">
                     <h1 className="text-3xl font-bold mb-6">Artists</h1>
 
@@ -29,7 +29,7 @@ const ArtistsPage: React.FC<ArtistsPageProps> = ({ artists }) => {
                                 // Wrap the artist card in a motion.div for animation
                                 <motion.div
                                     key={artist.id}
-                                    className="bg-gray-800/50 rounded-lg p-4 hover:bg-gray-700/50 transition-all duration-300"
+                                    className="bg-gray-400/50 dark:bg-gray-800/50 rounded-lg p-4 dark:hover:bg-gray-700/50 hover:bg-gray-500/50 transition-all duration-300"
                                     initial={{ opacity: 0, y: 20 }} // Start with opacity 0 and slide from below
                                     animate={{ opacity: 1, y: 0 }} // Animate to full opacity and normal position
                                     transition={{ duration: 0.5 }} // Animation duration

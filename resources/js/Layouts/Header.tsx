@@ -1,15 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Menu, X, Music2, Users, BookOpen, Mail, ChevronDown, User } from 'lucide-react';
+import { Search, Menu, X, Music2, Users, BookOpen, Mail, ChevronDown, User, LogIn } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SearchModal from './SearchModal';
 import DarkModeToggle from '@/Components/DarkModeToggle';
+import { router } from '@inertiajs/react';
 
 const Header = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const [recentSearches, setRecentSearches] = useState<string[]>([]);
+    {
+        useEffect(() => {
+            const handleKeyDown = (e: KeyboardEvent) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    toggleSearch();
+                }
+            };
 
+            window.addEventListener('keydown', handleKeyDown);
+            return () => window.removeEventListener('keydown', handleKeyDown);
+        }, [])
+    }
     // Handle scroll effect
     useEffect(() => {
         const handleScroll = () => {
@@ -30,10 +42,6 @@ const Header = () => {
         setIsSearchOpen(false);
     };
 
-    const addRecentSearch = (updatedSearches: string[]) => {
-        setRecentSearches(updatedSearches);
-    };
-
     const navItems = [
         { href: '/music', label: 'Music', icon: Music2 },
         { href: '/artists', label: 'Artists', icon: Users },
@@ -52,31 +60,31 @@ const Header = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
-                    <motion.a
-                        href="/"
+                    <motion.div
                         className="flex items-center space-x-2"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
+                        onClick={() => router.get('/')}
                     >
                         <Music2 className="w-8 h-8 text-purple-600" />
-                        <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                        <span className="text-xl cursor-pointer font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
                             MusicHub
                         </span>
-                    </motion.a>
+                    </motion.div>
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex items-center space-x-1">
                         {navItems.map((item) => (
-                            <motion.a
+                            <motion.div
                                 key={item.label}
-                                href={item.href}
-                                className="px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-1 group transition-colors"
+                                onClick={() => router.get(item.href)}
+                                className="px-3 py-2 cursor-pointer rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-1 group transition-colors"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <item.icon className="w-4 h-4 group-hover:text-purple-500 transition-colors" />
                                 <span>{item.label}</span>
-                            </motion.a>
+                            </motion.div>
                         ))}
                     </nav>
 
@@ -116,6 +124,25 @@ const Header = () => {
                             <DarkModeToggle />
                         </div>
 
+                        <div className="hidden sm:block">
+                            <motion.button
+                                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all cursor-pointer"
+                                onClick={() => router.get('/login')}
+                                whileTap={{ scale: 0.9 }}
+                            >
+                                <LogIn className="w-5 h-5" />
+                            </motion.button>
+                        </div>
+
+                        {/* <div className="hidden sm:block">
+                            <motion.button
+                                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                onClick={() => router.get('/login')}
+                                whileTap={{ scale: 0.9 }}
+                            >
+                                Create Account
+                            </motion.button>
+                        </div> */}
                         {/* Mobile Menu Button */}
                         <motion.button
                             className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -163,24 +190,12 @@ const Header = () => {
             <SearchModal
                 isOpen={isSearchOpen}
                 toggleSearch={toggleSearch}
-                recentSearches={recentSearches}
-                addRecentSearch={addRecentSearch}
             />
 
             {/* Keyboard Shortcut Handler */}
             <div className="hidden">
                 {/* Add keyboard shortcut listener for ⌘K */}
-                {useEffect(() => {
-                    const handleKeyDown = (e: KeyboardEvent) => {
-                        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                            e.preventDefault();
-                            toggleSearch();
-                        }
-                    };
 
-                    window.addEventListener('keydown', handleKeyDown);
-                    return () => window.removeEventListener('keydown', handleKeyDown);
-                }, [])}
             </div>
         </header>
     );

@@ -40,7 +40,7 @@ const Footer = () => {
     ];
 
     return (
-        <footer className="bg-gradient-to-b from-gray-900 to-black text-gray-300">
+        <footer className="bg-gradient-to-b from-white to-gray-300 dark:from-gray-900 dark:to-black dark:text-gray-300">
             {/* Main Footer Content */}
             <div className="max-w-7xl mx-auto pt-16 pb-8 px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
@@ -59,7 +59,7 @@ const Footer = () => {
                                     MusicHub
                                 </span>
                             </div>
-                            <p className="text-sm text-gray-400 max-w-md">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md">
                                 Discover, stream, and share a constantly expanding mix of music from emerging and major artists around the world.
                             </p>
                             {/* Contact Information */}
@@ -70,7 +70,7 @@ const Footer = () => {
                                         className="flex items-center space-x-3 text-sm"
                                         whileHover={{ x: 2 }}
                                     >
-                                        <item.icon className="w-4 h-4 text-gray-400" />
+                                        <item.icon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                                         <span>{item.text}</span>
                                     </motion.div>
                                 ))}
@@ -93,7 +93,7 @@ const Footer = () => {
                                     <motion.li key={linkIndex} whileHover={{ x: 2 }}>
                                         <a
                                             href={link.href}
-                                            className="text-sm text-gray-400 hover:text-white transition-colors duration-200 flex items-center group"
+                                            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-500 dark:hover:text-white transition-colors duration-200 flex items-center group"
                                         >
                                             <ArrowRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
                                             <span>{link.label}</span>
@@ -111,11 +111,11 @@ const Footer = () => {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5 }}
-                    className="mt-12 pt-8 border-t border-gray-800"
+                    className="mt-12 pt-8 border-t-2 border-gray-300 dark:border-gray-800"
                 >
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                         {/* Copyright */}
-                        <div className="text-sm text-gray-400">
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
                             &copy; {currentYear} MusicHub. All rights reserved.
                         </div>
 
@@ -127,7 +127,7 @@ const Footer = () => {
                                     href={social.href}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`text-gray-400 transition-all duration-300 ${social.color}`}
+                                    className={`text-gray-600 dark:text-gray-400 transition-all duration-300 ${social.color}`}
                                     whileHover={{ scale: 1.2, rotate: 8 }}
                                     whileTap={{ scale: 0.9 }}
                                     aria-label={social.label}
@@ -146,12 +146,12 @@ const Footer = () => {
                         transition={{ duration: 0.5, delay: 0.2 }}
                         className="mt-8 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
                     >
-                        <span className="text-sm text-gray-400">Stay up to date with the latest music</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Stay up to date with the latest music</span>
                         <div className="flex space-x-2">
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="px-4 py-2 bg-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                                className="px-4 py-2 bg-gray-200 border-2 border-gray-300 border-2 dark:border-gray-500 dark:bg-gray-600 dark:bg-gray-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                             />
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
