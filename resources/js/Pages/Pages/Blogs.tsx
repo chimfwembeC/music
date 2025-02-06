@@ -50,7 +50,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
 
     return (
         <GuestLayout title="Blogs">
-            <div className="min-h-screen bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 text-white">
+            <div className="min-h-screen bg-gradient-to-br  dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 dark:text-white text-gray-600">
                 <div className="container mx-auto px-4 py-8">
                     <h1 className="text-3xl font-bold mb-6">Blogs</h1>
 
@@ -61,12 +61,12 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                             value={filters.search}
                             onChange={handleSearchChange}
                             placeholder="Search Blogs"
-                            className="w-full max-w-xs p-2 rounded-lg bg-gray-400/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-white"
+                            className="w-full max-w-xs p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-white"
                         />
                         <select
                             value={filters.category}
                             onChange={handleCategoryChange}
-                            className="p-2 rounded-lg bg-gray-400/50 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-white ml-4"
+                            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-white ml-4"
                         >
                             <option value="">All Categories</option>
                             <option value="Tech">Tech</option>
@@ -88,7 +88,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                                 {displayedBlogs.map((blog) => (
                                     <motion.div
                                         key={blog.id}
-                                        className="bg-gray-400/50 dark:bg-gray-800/50 rounded-lg p-4 dark:hover:bg-gray-500/50 hover:bg-gray-700/50 transition-all duration-300"
+                                        className="bg-gray-100 dark:bg-gray-800 border border-gray-400/50 dark:border-gray-600 rounded-lg p-4 transition-all duration-300"
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.5 }}

@@ -59,7 +59,10 @@ function SearchResults({ query, results }: SearchResults) {
             month: 'long',
             day: 'numeric'
         });
-    } return (
+    }
+
+    console.log('results', results?.genres);
+    return (
         <GuestLayout title={'search results'}>
             <div className="min-h-screen bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 text-gray-800 dark:text-white">
                 <div className="container mx-auto px-4 py-8">
@@ -70,19 +73,19 @@ function SearchResults({ query, results }: SearchResults) {
                         <div className="h-1 w-20 bg-purple-500 rounded-full"></div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         {/* Left Sidebar */}
-                        <div className="col-span-1">
-                            {/* Artists Section */}
+                        {/* <div className="col-span-1">
+                            Artists Section
                             <section className="mb-12">
                                 <h2 className="text-2xl font-semibold mb-6 flex items-center">
                                     <User className="mr-2" />
                                     Artists
                                 </h2>
 
-                                {results.artists.length ? (
+                                {results?.artists?.length ? (
                                     <div className="grid gap-4">
-                                        {results.artists.map((artist) => (
+                                        {results?.artists?.map((artist) => (
                                             <div
                                                 key={artist.id}
                                                 className="bg-white flex gap-4 items-center dark:bg-gray-800/50 rounded-lg p-4 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
@@ -108,21 +111,21 @@ function SearchResults({ query, results }: SearchResults) {
                                 )}
                             </section>
 
-                            {/* Genres Section */}
+                            Genres Section
                             <section className="mb-12">
                                 <h2 className="text-2xl font-semibold mb-6 flex items-center">
                                     <Tag className="mr-2" />
                                     Genres
                                 </h2>
 
-                                {results.genres.length ? (
+                                {results?.genres?.length ? (
                                     <div className="grid gap-4">
-                                        {results.genres.map((genre) => (
+                                        {results?.genres?.map((genre) => (
                                             <div
                                                 key={genre.id}
                                                 className="bg-white dark:bg-gray-800/50 rounded-lg p-4 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                                             >
-                                                <h3 className="text-sm font-semibold">{genre.name}</h3>
+                                                <h3 className="text-sm font-semibold">{genre.title}</h3>
                                             </div>
                                         ))}
                                     </div>
@@ -133,7 +136,7 @@ function SearchResults({ query, results }: SearchResults) {
                                     </div>
                                 )}
                             </section>
-                        </div>
+                        </div> */}
 
                         {/* Main Content */}
                         <div className="col-span-3">
@@ -149,7 +152,10 @@ function SearchResults({ query, results }: SearchResults) {
                                         {results.musics.map((music) => (
                                             <div
                                                 key={music.id}
-                                                className="bg-white dark:bg-gray-800/50 rounded-lg overflow-hidden hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
+                                                className={`
+                                                    bg-gray-100 dark:bg-gray-800 border border-gray-400/50
+                                                     dark:border-gray-600 rounded-lg rounded-lg overflow-hidden hover:bg-gray-50
+                                                     dark:hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm`}
                                             >
                                                 <div className="flex items-center p-4">
                                                     <div className="relative group w-20 h-20 flex-shrink-0">
@@ -169,12 +175,12 @@ function SearchResults({ query, results }: SearchResults) {
                                                         <div className="grid grid-cols-2 gap-4">
                                                             <div className="flex items-center text-gray-800 dark:text-gray-300">
                                                                 <User className="w-4 h-4 mr-2" />
-                                                                <span>{music.artist.name}</span>
+                                                                <span>{music.artist?.name}</span>
                                                             </div>
 
                                                             <div className="flex items-center text-gray-800 dark:text-gray-300">
                                                                 <Tag className="w-4 h-4 mr-2" />
-                                                                <span>{music.genre.name}</span>
+                                                                <span>{music.genre?.name}</span>
                                                             </div>
 
                                                             <div className="flex items-center text-gray-800 dark:text-gray-300">
@@ -202,17 +208,17 @@ function SearchResults({ query, results }: SearchResults) {
                         </div>
 
                         {/* Right Sidebar */}
-                        <div className="col-span-1">
-                            {/* Blogs Section */}
+                        {/* <div className="col-span-1">
+                            Blogs Section
                             <section className="mb-12">
                                 <h2 className="text-2xl font-semibold mb-6 flex items-center">
                                     <User className="mr-2" />
                                     Recent Blogs
                                 </h2>
 
-                                {results.blogs.length ? (
+                                {results?.blogs?.length ? (
                                     <div className="grid gap-4">
-                                        {results.blogs.map((blog) => (
+                                        {results?.blogs?.map((blog) => (
                                             <div
                                                 key={blog.id}
                                                 className="bg-white flex items-center gap-4 dark:bg-gray-800/50 rounded-lg p-4 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
@@ -236,21 +242,21 @@ function SearchResults({ query, results }: SearchResults) {
                                 )}
                             </section>
 
-                            {/* Albums Section */}
+                            Albums Section
                             <section className="mb-12">
                                 <h2 className="text-2xl font-semibold mb-6 flex items-center">
                                     <Disc className="mr-2" />
                                     Albums
                                 </h2>
 
-                                {results.albums.length ? (
+                                {results.albums?.length ? (
                                     <div className="grid gap-4">
-                                        {results.albums.map((album) => (
+                                        {results.albums?.map((album) => (
                                             <div
                                                 key={album.id}
                                                 className="bg-white dark:bg-gray-800/50 rounded-lg p-4 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                                             >
-                                                <h3 className="text-sm font-semibold">{album.name}</h3>
+                                                <h3 className="text-sm font-semibold">{album.title}</h3>
                                             </div>
                                         ))}
                                     </div>
@@ -261,7 +267,7 @@ function SearchResults({ query, results }: SearchResults) {
                                     </div>
                                 )}
                             </section>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

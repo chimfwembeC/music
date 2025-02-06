@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Album;
 use App\Models\Artist;
 use App\Models\Blog;
 use App\Models\Music;
@@ -22,6 +23,9 @@ class PageController extends Controller
     {
         return Inertia::render('Pages/Artists', [
             'artists' => Artist::all(),
+            'music' => Music::latest()->limit(6)->get(),
+            'albums' => Album::with(['genre', 'artist'])->latest()->limit(6)->get(),
+            // 'albums' => Album::with(['genre', 'artist'])->where('download_counts' >=  50)->latest()->limit(6)->get(),
         ]);
     }
 

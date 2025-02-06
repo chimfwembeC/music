@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             ArtistSeeder::class,
             MusicSeeder::class,
             BlogSeeder::class,
-            AlbumSeeder::class,
+            // AlbumSeeder::class,
         ]);
 
 

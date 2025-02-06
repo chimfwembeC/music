@@ -62,7 +62,7 @@ const SearchModal = ({ isOpen, toggleSearch }) => {
     };
 
     const fetchSuggestions = useCallback(async (query: string) => {
-        if (query.length < 2) {
+        if (query.length < 1) {
             setSuggestions([]);
             setError(null);
             return;

@@ -62,7 +62,7 @@ class ArtistController extends Controller
     {
         // Display the artist details, including the related music
         return Inertia::render('Artist/Show', [
-            'artist' => $artist->load('music'), // Eager load music related to the artist
+            'artist' => $artist->load(['music', 'albums']), // Eager load music related to the artist
         ]);
     }
 

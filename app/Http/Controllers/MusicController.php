@@ -70,14 +70,33 @@ class MusicController extends Controller
         return redirect()->route('music.index')->with('success', 'Music created successfully.');
     }
 
+    // Track Downloads
+    public function trackDownload($id)
+    {
+        $music = Music::findOrFail($id);
+        $music->increment('download_counts');
 
+        return response()->json(['message' => 'Download count updated', 'downloads' => $music->download_counts]);
+    }
+
+    // Track Shares
+    public function trackShare($id)
+    {
+        $music = Music::findOrFail($id);
+        $music->increment('share_count');
+
+        return response()->json(['message' => 'Share count updated', 'shares' => $music->share_count]);
+    }
     /**
      * Display the specified resource.
      */
-    public function show(Music $music)
+    public function show($slug)
     {
+
+        $music = Music::where('slug', $slug)->first();
+
         return Inertia::render('Music/Show', [
-            'music' => $music->load(['artist', 'genre']),
+            'music' => $music->load(['artist', 'genre', 'album']),
         ]);
     }
 

@@ -138,7 +138,7 @@ export default function HeroSection() {
 
 
                         {/* trending floating */}
-                        <div className="overflow-hidden">
+                        {/* <div className="overflow-hidden">
                             {[...Array(5)].map((_, i) => (
                                 <motion.div
                                     key={i}
@@ -158,7 +158,7 @@ export default function HeroSection() {
                                     <Headphones size={25} />
                                 </motion.div>
                             ))}
-                        </div>
+                        </div> */}
 
                         {/* Stats Grid */}
                         <motion.div
@@ -171,6 +171,7 @@ export default function HeroSection() {
                                 <motion.div
                                     key={index}
                                     {...fadeInUp}
+                                    whileHover={{ scale: 1.05 }}
                                     transition={{ delay: 0.6 + index * 0.1 }}
                                     className="relative group"
                                 >

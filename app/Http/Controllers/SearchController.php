@@ -19,11 +19,15 @@ class SearchController extends Controller
     public function search(Request $request)
     {
         // Validate the incoming search query
-        $request->validate([
-            'query' => 'required|string|min:3',
-        ]);
+        // $request->validate([
+        //     'query' => 'required|string|min:3',
+        // ]);
 
         $query = $request->input('query');
+
+        // if (strlen($query) < 2) {
+        //     return response()->json([]);
+        // }
 
         // Store in recent searches
         $this->updateRecentSearches($query);
@@ -31,10 +35,10 @@ class SearchController extends Controller
         // Perform the search on each model
         $results = [
             'musics' => Music::with(['artist', 'genre'])->where('title', 'like', "%$query%")->get(),
-            'artists' => Artist::latest()->get(),
-            'genres' => Genre::latest()->get(),
-            'blogs' => Blog::latest()->get(),
-            'albums' => Album::latest()->get(),
+            'artists' => Artist::latest()->limit(6)->get(),
+            'genres' => Genre::latest()->limit(6)->get(),
+            'blogs' => Blog::latest()->limit(6)->get(),
+            'albums' => Album::latest()->limit(6)->get(),
             // 'artists' => Artist::where('name', 'like', "%$query%")->get(),
             // 'genres' => Genre::where('name', 'like', "%$query%")->get(),
             // 'blogs' => Blog::where('title', 'like', "%$query%")->get(),
@@ -46,32 +50,32 @@ class SearchController extends Controller
         ]);
     }
 
-    public function searchType($type, $id)
-    {
-        $data = null;
+    // public function searchType($type, $id)
+    // {
+    //     $data = null;
 
-        if ($type === 'song') {
-            $data = Music::with('artist')->find($id);
-        } elseif ($type === 'artist') {
-            $data = Artist::find($id);
-        } elseif ($type === 'genre') {
-            $data = Genre::find($id);
-        }
+    //     if ($type === 'song') {
+    //         $data = Music::with('artist')->find($id);
+    //     } elseif ($type === 'artist') {
+    //         $data = Artist::find($id);
+    //     } elseif ($type === 'genre') {
+    //         $data = Genre::find($id);
+    //     }
 
-        return Inertia::render("Searches/SearchType", [
-            'type' => $type, // Passing type as a prop
-            'prop' => $data
-        ]);
-    }
+    //     return Inertia::render("Searches/SearchType", [
+    //         'type' => $type, // Passing type as a prop
+    //         'prop' => $data
+    //     ]);
+    // }
 
     public function suggestions(Request $request)
     {
         try {
             $query = $request->input('query');
 
-            if (strlen($query) < 2) {
-                return response()->json([]);
-            }
+            // if (strlen($query) < 2) {
+            //     return response()->json([]);
+            // }
 
             // Get song suggestions with eager loading of artist
             $songs = Music::where('title', 'like', "%{$query}%")
@@ -90,39 +94,39 @@ class SearchController extends Controller
                 });
 
             // Get artist suggestions
-            $artists = Artist::where('name', 'like', "%{$query}%")
-                ->select('id', 'name', 'image_url')
-                ->limit(3)
-                ->get()
-                ->map(function ($artist) {
-                    return [
-                        'id' => (string) $artist->id,
-                        'type' => 'artist',
-                        'title' => $artist->name,
-                        'subtitle' => 'Artist',
-                        'imageUrl' => $artist->image_url ?? 'https://via.placeholder.com/150',
-                    ];
-                });
+            // $artists = Artist::where('name', 'like', "%{$query}%")
+            //     ->select('id', 'name', 'image_url')
+            //     ->limit(3)
+            //     ->get()
+            //     ->map(function ($artist) {
+            //         return [
+            //             'id' => (string) $artist->id,
+            //             'type' => 'artist',
+            //             'title' => $artist->name,
+            //             'subtitle' => 'Artist',
+            //             'imageUrl' => $artist->image_url ?? 'https://via.placeholder.com/150',
+            //         ];
+            //     });
 
             // Get genre suggestions
-            $genres = Genre::where('name', 'like', "%{$query}%")
-                ->select('id', 'name', 'description')
-                ->limit(2)
-                ->get()
-                ->map(function ($genre) {
-                    return [
-                        'id' => (string) $genre->id,
-                        'type' => 'genre',
-                        'title' => $genre->name,
-                        'subtitle' => $genre->description ?? 'Genre',
-                        'imageUrl' => 'https://via.placeholder.com/150',
-                    ];
-                });
+            // $genres = Genre::where('name', 'like', "%{$query}%")
+            //     ->select('id', 'name', 'description')
+            //     ->limit(2)
+            //     ->get()
+            //     ->map(function ($genre) {
+            //         return [
+            //             'id' => (string) $genre->id,
+            //             'type' => 'genre',
+            //             'title' => $genre->name,
+            //             'subtitle' => $genre->description ?? 'Genre',
+            //             'imageUrl' => 'https://via.placeholder.com/150',
+            //         ];
+            //     });
 
             // Merge all suggestions
-            $suggestions = $songs->concat($artists)->concat($genres);
+            // $suggestions = $songs->concat($artists)->concat($genres);
 
-            return response()->json($suggestions);
+            return response()->json($songs);
         } catch (\Exception $e) {
             \Log::error('Search suggestion error: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to fetch suggestions'], 500);

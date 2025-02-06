@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { Play, Clock, Calendar, User, Tag, Download, Share2 } from 'lucide-react';
+import { Play, Clock, User, Tag, Download, Share2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
+import { Link } from '@inertiajs/react';
+import MediaPlayerModal from '@/Components/MediaPlayerModal';
+import MotionAlert from '@/Components/MotionAlert';
+import axios from 'axios';
 
 // Types
 interface Artist {
@@ -37,10 +41,11 @@ function formatDuration(seconds: number): string {
 }
 
 function Music({ musics }: MusicPageProps) {
+    // Search, filter, pagination & download states
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedGenre, setSelectedGenre] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6;
+    const itemsPerPage = 12;
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
     const [showModal, setShowModal] = useState(false);
@@ -48,6 +53,13 @@ function Music({ musics }: MusicPageProps) {
     const [selectedMusic, setSelectedMusic] = useState<Music | null>(null);
     const [downloadingMusicIds, setDownloadingMusicIds] = useState<number[]>([]);
     const [error, setError] = useState<string | null>(null);
+
+    // Media Player Modal states
+    const [selectedPlayerMusic, setSelectedPlayerMusic] = useState<Music | null>(null);
+    const [showPlayerModal, setShowPlayerModal] = useState(false);
+
+    // MotionAlert state for success and error notifications
+    const [motionAlert, setMotionAlert] = useState<{ message: string, type: "success" | "error" } | null>(null);
 
     const filteredMusic = musics.filter((music) =>
         music.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -61,13 +73,13 @@ function Music({ musics }: MusicPageProps) {
     const handleDownloadStart = (music: Music) => {
         setSelectedMusic(music);
         setDownloadingMusicIds((prev) => [...prev, music.id]);
-        setShowModal(true);  // Open the modal immediately
+        setShowModal(true);
         setDownloadProgress(0);
-        setIsFileVerified(false);  // Start with the file not verified
-        setError(null);  // Reset any previous errors
+        setIsFileVerified(false);
+        setError(null);
 
-        // After the modal opens, start the download process
-        handleDownload(music);  // Now we trigger handleDownload here
+        // Start the download process
+        handleDownload(music);
     };
 
     const handleFinalDownload = (music: Music, downloadUrl: string) => {
@@ -75,123 +87,146 @@ function Music({ musics }: MusicPageProps) {
         link.href = downloadUrl;
         link.download = `${music.original_filename}.mp3`;
         link.click();
-    }
+    };
+
     const handleDownload = async (music: Music) => {
         if (!music || downloadingMusicIds.includes(music.id)) return;
-
         const audioUrl = music.file_url;
-        console.log('Attempting to download from:', audioUrl);
+        // console.log('Attempting to download from:', audioUrl);
 
         try {
-            // First verify the file exists (this is the HEAD request)
+            // Verify file existence via a HEAD request
             const verificationResponse = await fetch(audioUrl, {
                 method: 'HEAD',
-                headers: {
-                    'Content-Type': 'application/octet-stream',
-                },
+                headers: { 'Content-Type': 'application/octet-stream' },
             });
 
             if (!verificationResponse.ok) {
                 throw new Error('File not found or unable to fetch');
             }
-
-            // If verification passes, set isFileVerified to true
             setIsFileVerified(true);
 
-            // Start actual download (the GET request)
+            // Download file via GET request
             const response = await fetch(audioUrl, {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/octet-stream',
-                },
+                headers: { 'Content-Type': 'application/octet-stream' },
             });
 
             const contentLength = response.headers.get('Content-Length');
             const totalBytes = contentLength ? parseInt(contentLength, 10) : 0;
             const reader = response.body?.getReader();
-
             if (!reader) throw new Error('Failed to initialize file reader');
 
             let receivedBytes = 0;
             const chunks: Uint8Array[] = [];
-
             setIsDownloading(true);
 
             const readStream = async () => {
                 const { done, value } = await reader.read();
-
                 if (done) {
                     const blob = new Blob(chunks);
                     const downloadUrl = URL.createObjectURL(blob);
                     handleFinalDownload(music, downloadUrl);
-
-
                     URL.revokeObjectURL(downloadUrl);
                     setDownloadingMusicIds((prev) => prev.filter(id => id !== music.id));
                     setShowModal(false);
+                    // Show success alert
+                    setMotionAlert({ message: 'Download completed successfully!', type: 'success' });
+
+                    // send downloads increment count
+                    const response = await axios.post(`/music/${music.id}/download`);
+
+                    setTimeout(() => setMotionAlert(null), 3000);
                     return;
                 }
-
                 if (value) {
                     chunks.push(value);
                     receivedBytes += value.length;
-                    const progress = Math.round((receivedBytes / totalBytes) * 100);
+                    const progress = totalBytes ? Math.round((receivedBytes / totalBytes) * 100) : 0;
                     setDownloadProgress(progress);
                 }
-
                 setTimeout(readStream, 0);
             };
 
             await readStream();
         } catch (error) {
             console.error('Error during download:', error);
-            setIsFileVerified(false);  // If there was an error, file is not verified
+            setIsFileVerified(false);
             setDownloadProgress(0);
             setDownloadingMusicIds((prev) => prev.filter(id => id !== music.id));
             setShowModal(false);
-            setError(error instanceof Error ? error.message : 'An error occurred');
+            const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+            setError(errorMessage);
+            // Show error alert
+            setMotionAlert({ message: errorMessage, type: 'error' });
+            setTimeout(() => setMotionAlert(null), 3000);
         } finally {
             setIsDownloading(false);
         }
     };
 
-
     const handleShare = (musicId: number) => {
         const music = musics.find((m) => m.id === musicId);
         if (music) {
+            // Construct a human-friendly URL for the music page.
+            const shareUrl = `${window.location.origin}/music/${music.slug}`;
             const shareData = {
                 title: music.title,
                 text: `Check out this song: ${music.title} by ${music.artist.name}`,
-                url: music.file_url,
+                url: shareUrl,
             };
 
             if (navigator.share) {
                 navigator.share(shareData)
-                    .then(() => console.log('Successfully shared'))
-                    .catch((error) => console.error('Error sharing:', error));
+                    .then(() => {
+                        setMotionAlert({ message: 'Successfully shared!', type: 'success' });
+                        // send downloads increment count
+                        axios.post(`/music/${musicId}/share`);
+                        setTimeout(() => setMotionAlert(null), 3000);
+                    })
+                    .catch((error) => {
+                        setMotionAlert({ message: 'Error sharing: ' + error.message, type: 'error' });
+                        setTimeout(() => setMotionAlert(null), 3000);
+                    });
             } else {
-                console.log('Web Share API not supported in this browser');
+                // Fallback: Copy URL to clipboard
+                navigator.clipboard.writeText(shareUrl)
+                    .then(() => {
+                        setMotionAlert({ message: 'Share URL copied to clipboard!', type: 'success' });
+                        const response = axios.post(`/music/${musicId}/share`);
+                        setTimeout(() => setMotionAlert(null), 3000);
+                    })
+                    .catch((error) => {
+                        setMotionAlert({ message: 'Error copying share URL!', type: 'error' });
+                        setTimeout(() => setMotionAlert(null), 3000);
+                    });
             }
         }
     };
 
+    // Handle playing music
+    const handlePlay = (music: Music) => {
+        setSelectedPlayerMusic(music);
+        setShowPlayerModal(true);
+    };
+
     return (
         <GuestLayout title="Music">
-            <div className="min-h-screen bg-gradient-to-br  dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 dark:text-white text-gray-600">
+            <div className="min-h-screen bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 dark:text-white text-gray-600">
                 <div className="container mx-auto px-4 py-8">
-                    <h1 className="text-3xl font-bold mb-6">Music</h1>
+                    <h1 className="text-3xl font-bold mb-6">Discover your favourite songs</h1>
 
                     {/* Search & Filter Controls */}
                     <div className="mb-6 flex flex-col md:flex-row gap-4">
                         <input
                             type="text"
                             placeholder="Search by title..."
-                            className="p-3 bg-white border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-white rounded-md w-full md:w-1/2"
+                            className="p-3 bg-gray-100 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-white rounded-md w-full md:w-1/2"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <select
-                            className="p-3 bg-white border-2 border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-gray-600 rounded-md w-full md:w-1/4"
+                            className="p-3 bg-gray-100 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-gray-600 rounded-md w-full md:w-1/4"
                             value={selectedGenre}
                             onChange={(e) => setSelectedGenre(e.target.value)}
                         >
@@ -207,63 +242,73 @@ function Music({ musics }: MusicPageProps) {
                             {displayedMusic.map((music) => (
                                 <motion.div
                                     key={music.id}
-                                    className="bg-white dark:bg-gray-800/50 rounded-lg overflow-hidden hover:bg-gray-300 dark:hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
+                                    className="border border-gray-400 dark:border-gray-600 bg-gray-400/50 dark:bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-300 dark:hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.5 }}
                                     whileHover={{ scale: 1.01 }}
                                 >
                                     <div className="flex items-center p-4">
-                                        <div className="relative group w-20 h-20 flex-shrink-0">
+                                        <div className="relative group w-12 h-12 flex-shrink-0">
                                             <img
-                                                src={music.image_url && 'https://placehold.jp/150x150.png'}
+                                                src={`${music.image_url}`}
                                                 alt={music.title}
-                                                className="w-full h-full object-cover rounded-md"
+                                                className="w-12 h-12 object-cover rounded-md bg-gray-400 dark:bg-gray-600 border border-gray-300 dark:border-gray-500"
                                             />
                                             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-300 rounded-md opacity-0 group-hover:opacity-100 flex items-center justify-center">
                                                 <Play className="w-8 h-8 text-white cursor-pointer" />
                                             </div>
                                         </div>
                                         <div className="ml-4 flex-grow">
-                                            <h3 className="text-xl font-semibold mb-2">{music.title}</h3>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="flex items-center dark:text-gray-300">
-                                                    <User className="w-4 h-4 mr-2" />
-                                                    <span>{music.artist?.name}</span>
+                                            <Link href={`/music/${music.slug}`}>
+                                                <span className="text-xl font-semibold mb-2 hover:underline">{music.title}</span>
+                                            </Link>
+                                            <div className="flex justify-between items-center gap-4">
+                                                <div className="flex justify-between gap-2 items-center dark:text-gray-300">
+                                                    <div className="flex items-center">
+                                                        <User className="w-4 h-4 mr-2" />
+                                                        <span>{music.artist.name}</span>
+                                                    </div>
+                                                    <div className="flex items-center">
+                                                        <Tag className="w-4 h-4 mr-2" />
+                                                        <span>{music.genre.name}</span>
+                                                    </div>
+                                                    <div className="flex items-center">
+                                                        <Clock className="w-4 h-4 mr-2" />
+                                                        <span>{formatDuration(music.duration)}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1 p-1 px-2 text-sm rounded-lg bg-gray-400/50 dark:bg-gray-600/50 ">
+                                                        <span>Downloads:</span>
+                                                        <span>{music.download_counts}</span>
+                                                    </div>
                                                 </div>
-                                                <div className="flex items-center dark:text-gray-300">
-                                                    <Tag className="w-4 h-4 mr-2" />
-                                                    <span>{music.genre?.name}</span>
-                                                </div>
-                                                <div className="flex items-center dark:text-gray-300">
-                                                    <Clock className="w-4 h-4 mr-2" />
-                                                    <span>{formatDuration(music.duration)}</span>
-                                                </div>
-                                                <div className="flex items-center dark:text-gray-300">
-                                                    <Calendar className="w-4 h-4 mr-2" />
-                                                    <span>{new Date(music.created_at).toLocaleDateString()}</span>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => handlePlay(music)}
+                                                        className="flex items-center gap-2 p-2 border border-gray-400 dark:border-gray-600 bg-gray-400/50 dark:bg-gray-600/50 rounded-lg text-white"
+                                                    >
+                                                        <Play className="h-4 w-4" />
+                                                        <div className="text-sm">Play</div>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDownloadStart(music)}
+                                                        className="flex items-center gap-2 p-2 bg-blue-600 rounded-lg text-white"
+                                                        disabled={downloadingMusicIds.includes(music.id)}
+                                                    >
+                                                        <Download className="h-4 w-4" />
+                                                        <div className="text-sm">
+                                                            {downloadingMusicIds.includes(music.id) ? 'Downloading...' : 'Download'}
+                                                        </div>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleShare(music.id)}
+                                                        className="flex items-center p-2 bg-green-600 rounded-lg text-white"
+                                                    >
+                                                        <Share2 className="h-4 w-4" />
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-
-                                    {/* Download, Share, Play Buttons */}
-                                    <div className="p-4 flex justify-between items-center bg-gray-200/50 dark:bg-gray-700/50 rounded-b-lg">
-                                        <button
-                                            onClick={() => handleDownloadStart(music)}
-                                            className="flex items-center px-4 py-2 bg-blue-600 rounded-lg text-white"
-                                            disabled={downloadingMusicIds.includes(music.id)}
-                                        >
-                                            <Download className="mr-2" />
-                                            {downloadingMusicIds.includes(music.id) ? 'Downloading...' : 'Download'}
-                                        </button>
-                                        <button
-                                            onClick={() => handleShare(music.id)}
-                                            className="flex items-center px-4 py-2 bg-green-600 rounded-lg text-white"
-                                        >
-                                            <Share2 className="mr-2" />
-                                            Share
-                                        </button>
                                     </div>
                                 </motion.div>
                             ))}
@@ -276,7 +321,7 @@ function Music({ musics }: MusicPageProps) {
 
                     {/* Pagination Controls */}
                     {totalPages > 1 && (
-                        <div className="flex justify-center mt-6 space-x-2">
+                        <div className="flex justify-end items-center mt-6 space-x-2">
                             <button
                                 className={`px-4 py-2 rounded-md ${currentPage === 1 || downloadingMusicIds.length > 0 ? 'bg-gray-400/50 dark:bg-gray-600 hover:bg-gray-500 cursor-not-allowed' : 'bg-gray-400/50 dark:bg-gray-600 hover:bg-gray-500'}`}
                                 disabled={currentPage === 1 || downloadingMusicIds.length > 0}
@@ -299,10 +344,8 @@ function Music({ musics }: MusicPageProps) {
                 {/* Download Modal */}
                 {showModal && selectedMusic && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-                        <div className=" dark:bg-gray-800 bg-white p-6 rounded-lg w-80 text-center">
+                        <div className="dark:bg-gray-800 bg-white p-6 rounded-lg w-80 text-center">
                             <h2 className="text-xl font-semibold mb-4">Downloading...</h2>
-
-                            {/* File verification status */}
                             {!isFileVerified && (
                                 <div className="mb-4">
                                     <span className="text-sm text-green-400">Verifying file...</span>
@@ -314,8 +357,6 @@ function Music({ musics }: MusicPageProps) {
                                     />
                                 </div>
                             )}
-
-                            {/* Download progress */}
                             {isFileVerified && (
                                 <div className="relative pt-1">
                                     <div className="flex mb-2 items-center justify-between">
@@ -324,7 +365,6 @@ function Music({ musics }: MusicPageProps) {
                                             {downloadProgress}%
                                         </span>
                                     </div>
-
                                     <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${downloadProgress}%` }}
@@ -333,8 +373,6 @@ function Music({ musics }: MusicPageProps) {
                                     />
                                 </div>
                             )}
-
-                            {/* Error state */}
                             {error && (
                                 <div className="text-red-500 mt-4">
                                     Failed to download file. Please try again.
@@ -344,6 +382,21 @@ function Music({ musics }: MusicPageProps) {
                     </div>
                 )}
             </div>
+
+            {/* Media Player Modal */}
+            {showPlayerModal && selectedPlayerMusic && (
+                <MediaPlayerModal
+                    music={selectedPlayerMusic}
+                    onClose={() => setShowPlayerModal(false)}
+                />
+            )}
+
+            {/* Motion Alert for Success & Error Notifications */}
+            <MotionAlert
+                show={!!motionAlert}
+                message={motionAlert ? motionAlert.message : ''}
+                type={motionAlert ? motionAlert.type : 'success'}
+            />
         </GuestLayout>
     );
 }

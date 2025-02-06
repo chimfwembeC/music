@@ -13,25 +13,9 @@ class ArtistSeeder extends Seeder
     public function run(): void
     {
         $artistsData = [
-            'The Beatles' => [
-                'bio' => 'Legendary rock band from Liverpool.',
-                'image_url' => 'https://example.com/beatles.jpg',
-            ],
-            'Eminem' => [
-                'bio' => 'Iconic rapper from Detroit.',
-                'image_url' => 'https://example.com/eminem.jpg',
-            ],
-            'Daft Punk' => [
-                'bio' => 'Pioneers of electronic music.',
-                'image_url' => 'https://example.com/daftpunk.jpg',
-            ],
-            'Miles Davis' => [
-                'bio' => 'Legendary jazz musician.',
-                'image_url' => 'https://example.com/milesdavis.jpg',
-            ],
-            'Taylor Swift' => [
-                'bio' => 'Pop music icon.',
-                'image_url' => 'https://example.com/taylorswift.jpg',
+            'Tory Lanez' => [
+                'bio' => 'Bio for Tory Lanez.',
+                'image_url' => '/uploads/artists/imgs/Tory Lanez.jpg',
             ],
         ];
 

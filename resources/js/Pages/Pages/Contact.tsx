@@ -40,7 +40,7 @@ function ContactPage() {
                         {/* Mock Contact Information Section */}
                         {/* Mock Contact Information Section */}
                         <motion.div
-                            className="w-full mb-8 mx-auto bg-white dark:bg-gray-800/50 p-6 rounded-lg"
+                            className="w-full mx-auto border border-gray-400 dark:border-gray-600 bg-gray-400/50 dark:bg-gray-800/50 p-6 rounded-lg"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.5 }}
@@ -67,7 +67,7 @@ function ContactPage() {
                                 transition={{ duration: 0.5 }}
                             >
                                 <h2 className="text-2xl font-semibold mb-4">Find Us on the Map</h2>
-                                <div className="w-full">
+                                <div className="w-full h-48">
                                     <iframe
                                         className="w-full h-full rounded-lg"
                                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d16058.53911902399!2d28.3228!3d-15.3875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMfxmYWluZ2Z1ZGZ1ZGFkZD8QbG9hZ2thdnRl!5e0!3m2!1sen!2sin!4v1621603505083!5m2!1sen!2sin"
@@ -84,7 +84,7 @@ function ContactPage() {
                         {/* Contact Form Section */}
                         <motion.form
                             onSubmit={handleSubmit}
-                            className="w-full mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg"
+                            className="w-full mx-auto border border-gray-400 dark:border-gray-600 bg-gray-400/50 dark:bg-gray-800 p-8 rounded-lg"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.5 }}
@@ -100,7 +100,7 @@ function ContactPage() {
                                     placeholder='Enter name'
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full p-3 rounded-lg bg-gray-300/50 dark:bg-gray-700 border-2 border-gray-400 dark:border-gray-600 dark:text-white text-gray-600"
+                                    className="w-full rounded-md bg-gray-300/50 dark:bg-gray-700/50 border border-gray-400 dark:border-gray-600 dark:text-white text-gray-600"
                                     required
                                 />
                             </div>
@@ -116,7 +116,7 @@ function ContactPage() {
                                     placeholder='Enter email'
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="w-full p-3 rounded-lg bg-gray-300/50 dark:bg-gray-700 border-2 border-gray-400 dark:border-gray-600 dark:text-white text-gray-600"
+                                    className="w-full rounded-md bg-gray-300/50 dark:bg-gray-700/50 border border-gray-400 dark:border-gray-600 dark:text-white text-gray-600"
                                     required
                                 />
                             </div>
@@ -132,7 +132,7 @@ function ContactPage() {
                                     value={formData.message}
                                     onChange={handleChange}
                                     rows={4}
-                                    className="w-full p-3 rounded-lg bg-gray-300/50 dark:bg-gray-700 border-2 border-gray-400 dark:border-gray-600 dark:text-white text-gray-600"
+                                    className="w-full rounded-lg bg-gray-300/50 dark:bg-gray-700/50 border border-gray-400 dark:border-gray-600 dark:text-white text-gray-600"
                                     required
                                 ></textarea>
                             </div>

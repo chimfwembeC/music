@@ -14,13 +14,11 @@ return new class extends Migration
         Schema::create('albums', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('slug')->unique();
             $table->foreignId('artist_id')->nullable()->constrained('artists');
             $table->foreignId('genre_id')->constrained('genres')->onDelete('cascade');
-            $table->string('original_filename')->nullable();  // Add the new column
-            $table->string('file_url');
             $table->string('image_url')->nullable();
-            $table->string('download_counts')->nullable()->default(0);
-            $table->integer('tracks')->default(1);
+            $table->integer('download_counts')->default(0);
             $table->boolean('is_published')->default(false);
             $table->timestamps();
         });

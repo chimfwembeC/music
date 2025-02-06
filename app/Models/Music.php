@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Music extends Model
 {
@@ -19,8 +20,43 @@ class Music extends Model
         'duration',
         'original_filename',
         'is_published',
-        'download_counts'
+        'download_counts',
+        'share_count',
+        'slug',
     ];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+        'download_counts' => 'integer',
+    ];
+
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($music) {
+            $music->slug = Str::slug($music->title);
+        });
+
+        static::updating(function ($music) {
+            $music->slug = Str::slug($music->title);
+        });
+    }
+
+    protected static function generateUniqueSlug($title)
+    {
+        $slug = Str::slug($title);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (static::where('slug', $slug)->exists()) {
+            $slug = "{$originalSlug}-{$count}";
+            $count++;
+        }
+
+        return $slug;
+    }
 
     public function artist()
     {

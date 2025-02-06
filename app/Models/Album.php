@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Album extends Model
 {
@@ -10,13 +11,43 @@ class Album extends Model
         'title',
         'artist_id',
         'genre_id',
-        'original_filename',
-        'file_url',
         'image_url',
-        'tracks',
         'is_published',
-        'download_counts'
+        'download_counts',
+        'slug',
     ];
+
+    protected $casts = [
+        'is_published' => 'boolean',
+        'download_counts' => 'integer',
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($album) {
+            $album->slug = Str::slug($album->title);
+        });
+
+        static::updating(function ($album) {
+            $album->slug = Str::slug($album->title);
+        });
+    }
+
+    protected static function generateUniqueSlug($title)
+    {
+        $slug = Str::slug($title);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (static::where('slug', $slug)->exists()) {
+            $slug = "{$originalSlug}-{$count}";
+            $count++;
+        }
+
+        return $slug;
+    }
 
     public function artist()
     {

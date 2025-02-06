@@ -21,8 +21,9 @@ class MusicSeeder extends Seeder
                     [
                         'title' => 'Hey Jude',
                         'original_filename' => 'hey_jude.mp3',
-                        'file_url' => '/path/to/music/files/hey_jude.mp3',
-                        'image_url' => '/path/to/music/images/hey_jude.jpg',
+                        // Update these paths to point to storage instead of public
+                        'file_url' => 'storage/path/to/music/files/hey_jude.mp3',
+                        'image_url' => 'storage/path/to/music/images/hey_jude.jpg',
                         'duration' => rand(180, 300),
                         'is_published' => true,
                         'download_counts' => rand(1, 500),
@@ -35,8 +36,8 @@ class MusicSeeder extends Seeder
                     [
                         'title' => 'Lose Yourself',
                         'original_filename' => 'lose_yourself.mp3',
-                        'file_url' => '/path/to/music/files/lose_yourself.mp3',
-                        'image_url' => '/path/to/music/images/lose_yourself.jpg',
+                        'file_url' => 'storage/path/to/music/files/lose_yourself.mp3',
+                        'image_url' => 'storage/path/to/music/images/lose_yourself.jpg',
                         'duration' => rand(180, 300),
                         'is_published' => true,
                         'download_counts' => rand(1, 500),
@@ -52,26 +53,8 @@ class MusicSeeder extends Seeder
                     [
                         'title' => 'Sorry 4 What',
                         'songs' => [
-                            '01 Sorry 4 What LV BELT',
-                            '02 Bad Bitches Wrk @ Taboo',
-                            '03 Where 2 Start',
-                            '04 Sex Songs',
-                            '05 Hennessy Memories',
-                            '06 Not Tricking Black Keys',
-                            '07 Y.D.S Iggy DelDia',
-                            "08 This Ain't Working",
-                            '09 Hurting Me',
-                            '10 Why Did I',
-                            '11 No More Parties in LA',
-                            '12 Anymore Fuck Boy Intentions',
-                            '13 Red Casamigos',
-                            '14 Understand',
-                            '15 Casa-Freak-Hoes',
-                            '16 Role Call (feat. A Boogie wit da Hoodie)',
-                            '17 Rare L',
-                            '18 Albany Bahamas',
-                            '19 Collection (feat. Yoko Gold)',
-                            '20 The Vent',
+                            '01 Sorry 4 What LV BELT - (SongsLover.com)',
+                            '02 Bad Bitches Wrk @ Taboo - (SongsLover.com)',
                         ],
                     ],
                 ],
@@ -81,7 +64,8 @@ class MusicSeeder extends Seeder
         foreach ($musicData as $artistName => $genres) {
             $artist = Artist::firstOrCreate(['name' => $artistName], [
                 'bio' => 'Bio for ' . $artistName,
-                'image_url' => '/path/to/artists/images/' . str_replace(' ', '_', strtolower($artistName)) . '.jpg',
+                // Update artist image path
+                'image_url' => '/storage/path/to/artists/images/' . str_replace(' ', '_', strtolower($artistName)) . '.jpg',
             ]);
 
             foreach ($genres as $genreName => $albums) {
@@ -91,29 +75,29 @@ class MusicSeeder extends Seeder
 
                 foreach ($albums as $albumInfo) {
                     if (isset($albumInfo['songs'])) {
-                        // Create album
+                        // Create album using storage path for image
                         $album = Album::create([
                             'title' => $albumInfo['title'],
                             'artist_id' => $artist->id,
                             'genre_id' => $genre->id,
-                            'original_filename' => "{$albumInfo['title']}.mp3",
-                            'file_url' => "/path/to/albums/files/{$albumInfo['title']}.mp3",
-                            'image_url' => "/path/to/albums/images/{$albumInfo['title']}.jpg",
-                            'tracks' => count($albumInfo['songs']),
+                            'image_url' => "/storage/uploads/albums/Sorry 4 What/Tory Lanez - PLAYBOY.jpg",
                             'is_published' => true,
                             'download_counts' => rand(1, 500),
                         ]);
 
                         // Create music for the album
                         foreach ($albumInfo['songs'] as $songTitle) {
-                            $filename = str_replace([' ', '(', ')', '@', '-'], '_', $songTitle) . '.mp3';
+                            // $filename = str_replace([' ', '(', ')', '@', '-'], '_', $songTitle) . '.mp3';
+                            $filename =  $songTitle . '.mp3';
+
                             Music::create([
                                 'title' => $songTitle,
                                 'artist_id' => $artist->id,
                                 'genre_id' => $genre->id,
                                 'album_id' => $album->id,
-                                'file_url' => "/home/crock/Documents/projects/personal/laravel/music/public/uploads/albums/Tory Lanez - Sorry 4 What - (SongsLover.com)/{$filename}",
-                                'image_url' => "/path/to/music/images/{$filename}.jpg",
+                                // File path now points to storage
+                                'file_url' => "/storage/uploads/albums/Sorry 4 What/{$filename}",
+                                'image_url' => "/storage/uploads/albums/Sorry 4 What/Tory Lanez - PLAYBOY.jpg",
                                 'duration' => rand(180, 300),
                                 'original_filename' => $filename,
                                 'is_published' => true,
@@ -121,7 +105,7 @@ class MusicSeeder extends Seeder
                             ]);
                         }
                     } else {
-                        // Create individual music
+                        // Create individual music, ensuring the file paths point to storage.
                         Music::create([
                             'title' => $albumInfo['title'],
                             'artist_id' => $artist->id,
