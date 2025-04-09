@@ -55,7 +55,7 @@ export default function NewsSection() {
       <div className="border border-purple-800 mt-4"></div>
 
       {/* News Loop - Render blogs */}
-      <div className="h-96 overflow-y-auto mt-4 border border-purple-800 rounded-md">
+      <div className="h-96 overflow-y-auto mt-4 border border-purple-800">
         {loading ? (
           <div className="text-center text-gray-500">Loading...</div>
         ) : (
