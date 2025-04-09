@@ -12,6 +12,7 @@
     "@types/lodash": "^4.17.15",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@types/react-responsive-masonry": "^2.6.0",
     "@vitejs/plugin-react": "^4.3.4",
     "@vue/server-renderer": "^3.3.13",
     "autoprefixer": "^10.4.20",
@@ -32,9 +33,11 @@
     "framer-motion": "^12.0.6",
     "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-responsive-masonry": "^2.7.1",
     "ziggy-js": "^2.5.0"
   },
   "prettier": {
