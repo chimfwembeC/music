@@ -40,7 +40,7 @@ const LandingPage = () => {
         <FAQSection />
 
         {/* Contact Section */}
-        <ContactSection />
+        {/* <ContactSection /> */}
       </div>
     </GuestLayout>
   );
