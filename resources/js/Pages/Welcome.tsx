@@ -9,6 +9,9 @@ import ContactSection from '@/Components/LandingPage/ContactSection';
 import HeroSection from '@/Components/LandingPage/HeroSection';
 import FeaturesSection from '@/Components/LandingPage/FeaturesSection';
 import FeaturedMusicSection from '@/Components/LandingPage/FeaturedMusicSection';
+import LatestAlbums from '@/Components/LandingPage/LatestAlbums';
+import MusicTabs from '@/Components/LandingPage/MusicTabs';
+import NewsSection from '@/Components/LandingPage/NewsSection';
 
 const LandingPage = () => {
   return (
@@ -16,14 +19,22 @@ const LandingPage = () => {
       <div className="">
         {/* Hero Section */}
         <HeroSection />
-        <div className="">
-          <FeaturedMusicSection />
-        </div>
-        {/* Features Section */}
-        <FeaturesSection />
+
+        <FeaturedMusicSection />
+
+        {/* show latest albums */}
+        <LatestAlbums />
 
         {/* Testimonials Section */}
-        <TestimonialsSection />
+        {/* <TestimonialsSection /> */}
+        <div className="max-w-5xl mx-auto grid grid-cols-3 gap-4">
+          <div className="col-span-1">
+            <NewsSection />
+          </div>
+          <div className="col-span-2">
+            <MusicTabs />
+          </div>
+        </div>
 
         {/* FAQ Section */}
         <FAQSection />
