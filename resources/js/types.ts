@@ -14,6 +14,7 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    role: string;
     current_team_id: Nullable<number>;
     profile_photo_path: Nullable<string>;
     profile_photo_url: string;
