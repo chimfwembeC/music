@@ -32,7 +32,7 @@ export default function NewsSection() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto py-10 px-4">
+    <div className="max-w-4xl mx-auto py-10">
       <h2 className="text-xl font-bold text-gray-800 dark:text-purple-500 mb-2">
         Celebrity News & Gists
       </h2>
