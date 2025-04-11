@@ -37,7 +37,7 @@ export default function Index({ musics }: Props) {
         </h2>
       )}
     >
-      <div className="max-w-5xl m-auto mt-4">
+      <div className="max-w-5xl h-screen m-auto mt-4">
         <div className="flex justify-end mb-4">
           <PrimaryButton onClick={() => router.get(route('tracks.create'))}>
             <Plus className="h-4 w-4 mr-1" />
@@ -50,6 +50,7 @@ export default function Index({ musics }: Props) {
           onTogglePublish={handleTogglePublish}
           onToggleFeatured={handleToggleFeatured}
         />
+        
       </div>
     </AppLayout>
   );

@@ -50,14 +50,14 @@ const MediaPlayerModal: React.FC<MediaPlayerModalProps> = ({ music, onClose }) =
                     </button>
                 </div>
                 <img
-                    src={music.image_url}
+                    src={`/storage/${music.image_url}`}
                     alt={music.title}
                     className="w-full h-48 object-cover rounded-md mb-4"
                 />
                 <h2 className="text-xl font-bold mb-2">{music.title}</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">{music.artist.name}</p>
                 <audio controls autoPlay className="w-full">
-                    <source src={music.file_url} type="audio/mpeg" />
+                    <source src={`/storage/${music.file_url}`} type="audio/mpeg" />
                     Your browser does not support the audio element.
                 </audio>
             </motion.div>

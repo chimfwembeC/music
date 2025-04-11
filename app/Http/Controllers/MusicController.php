@@ -58,9 +58,14 @@ class MusicController extends Controller
 
         // Handle file uploads
         $file = $request->file('file_url');
-        $file_url = $file->store('public/music');  // Store the file in the public/music directory
+        $file_url = $file->store('music','public');  // Store the file in the public/music directory
         $original_filename = $file->getClientOriginalName(); // Get the original filename
-        $image_url = $request->hasFile('image_url') ? $request->file('image_url')->store('public/images') : null;
+
+        $image_url = null;
+if ($request->hasFile('image_url')) {
+    $image_url = $request->file('image_url')->store('images','public'); // Save image
+}
+        // $image_url = $request->hasFile('image_url') ? $request->file('image_url')->store('public/images') : null;
 
          // Or use $request->boolean() to be extra safe with checkbox inputs
          $isPublished = $request->boolean('is_published');
@@ -188,7 +193,7 @@ public function toggleFeatured(Request $request, $id)
             // Delete old file if a new one is uploaded
             // Storage::delete($music->file_url);
             $file = $request->file('file_url');
-            $file_url = $file->store('public/music');
+            $file_url = $file->store('music','public');
             $original_filename = $file->getClientOriginalName(); // Get the original filename
         } else {
             $file_url = $music->file_url;
@@ -198,7 +203,7 @@ public function toggleFeatured(Request $request, $id)
         if ($request->hasFile('image_url')) {
             // Delete old image if a new one is uploaded
             // Storage::delete($music->image_url);
-            $image_url = $request->file('image_url')->store('public/images');
+            $image_url = $request->file('image_url')->store('images','public');
         } else {
             $image_url = $music->image_url;
         }

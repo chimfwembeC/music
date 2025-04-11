@@ -251,7 +251,7 @@ function Music({ musics }: MusicPageProps) {
                                     <div className="flex items-center p-4">
                                         <div className="relative group w-12 h-12 flex-shrink-0">
                                             <img
-                                                src={`${music.image_url}`}
+                                                src={`storage/${music.image_url}`}
                                                 alt={music.title}
                                                 className="w-12 h-12 object-cover rounded-md bg-gray-400 dark:bg-gray-600 border border-gray-300 dark:border-gray-500"
                                             />

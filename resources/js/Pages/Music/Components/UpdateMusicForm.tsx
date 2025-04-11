@@ -118,6 +118,15 @@ export default function UpdateMusicForm({
           </div>
         )}
 
+{/* // <!-- Current Profile Photo --> */}
+             <div className="mt-2">
+             <img
+               src={`/storage/${music.image_url}`}
+               alt={music.title}
+               className="rounded-lg h-20 w-20 object-cover"
+             />
+           </div>
+
         <SecondaryButton
           className="mt-2 mr-2"
           type="button"
@@ -222,6 +231,10 @@ export default function UpdateMusicForm({
           onChange={e => form.setData('file_url', e.target.files?.[0] ?? null)}
         />
         <InputError message={form.errors.file_url} className="mt-2" />
+        {/* <InputLabel htmlFor="file_path" value="Music File (path)" />
+<div className="">
+    {music.original_filename}
+</div> */}
       </div>
 
       {/* Publish Toggle */}
