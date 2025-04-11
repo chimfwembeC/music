@@ -43,8 +43,10 @@ Route::resource('genres', GenreController::class);
 Route::resource('blogs', BlogController::class);
 
 // Resource routes for MusicController
-Route::resource('music', MusicController::class);
-// Route::get('/music/{slug}/show', [MusicController::class, 'show']);
+Route::resource('tracks', MusicController::class);
+Route::patch('/tracks/{id}/toggle-publish', [MusicController::class, 'togglePublish'])->name('tracks.toggle-publish');
+Route::patch('/tracks/{id}/toggle-featured', [MusicController::class, 'toggleFeatured'])->name('tracks.toggle-featured');
+
 
 
 Route::get('/music', [PageController::class, 'music'])->name('music');
@@ -64,3 +66,5 @@ Route::get('/search/recent', [SearchController::class, 'getRecentSearches'])->na
 Route::post('/music/{id}/download', [MusicController::class, 'trackDownload']);
 Route::post('/music/{id}/share', [MusicController::class, 'trackShare']);
 Route::get('/albums/{id}/download', [AlbumController::class, 'downloadAlbum']);
+
+

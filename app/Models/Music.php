@@ -12,6 +12,7 @@ class Music extends Model
 
     protected $fillable = [
         'title',
+        'slug',
         'artist_id',
         'genre_id',
         'album_id',
@@ -22,15 +23,15 @@ class Music extends Model
         'is_published',
         'download_counts',
         'share_count',
-        'slug',
+        'is_featured',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'is_featured' => 'boolean',
         'download_counts' => 'integer',
     ];
-
-
+    
     public static function boot()
     {
         parent::boot();

@@ -97,13 +97,13 @@ const Header = () => {
                         >
                             <button
                                 onClick={toggleSearch}
-                                className="flex items-center w-48 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+                                className="flex items-center w-48 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-400 dark:border-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
                             >
                                 <Search className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                                 <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                                     Search...
                                 </span>
-                                <kbd className="ml-auto inline-flex items-center px-1.5 py-0.5 text-xs font-semibold text-gray-800 dark:text-gray-200 bg-gray-200 dark:bg-gray-700 rounded">
+                                <kbd className="ml-auto inline-flex items-center px-1.5 py-0.5 text-xs font-semibold text-gray-800 dark:text-gray-200 bg-gray-200 dark:bg-purple-800 rounded">
                                     ⌘K
                                 </kbd>
                             </button>
@@ -126,7 +126,7 @@ const Header = () => {
 
                         <div className="hidden sm:block">
                             <motion.button
-                                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all cursor-pointer"
+                                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 py-2 bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-400 dark:border-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all cursor-pointer"
                                 onClick={() => router.get('/login')}
                                 whileTap={{ scale: 0.9 }}
                             >

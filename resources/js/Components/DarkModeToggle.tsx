@@ -42,7 +42,7 @@ const DarkModeToggle = () => {
             {/* Toggle Button */}
             <button
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white"
+                className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-lg text-gray-900 dark:text-white border border-gray-400 dark:border-purple-800"
             >
                 {theme === "dark" ? <Moon size={20} className="text-gray-500" /> :
                     theme === "light" ? <Sun size={20} className="text-yellow-500" /> :
@@ -63,9 +63,9 @@ const DarkModeToggle = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
+                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-400 dark:border-purple-800 rounded-lg shadow-lg"
                     >
-                        <ul className="py-2">
+                        <ul className="py-2 dark:text-gray-200">
                             <li
                                 onClick={() => handleThemeChange("light")}
                                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"

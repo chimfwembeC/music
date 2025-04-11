@@ -3,6 +3,8 @@ import Welcome from '@/Components/Welcome';
 import AppLayout from '@/Layouts/AppLayout';
 import useTypedPage from '@/Hooks/useTypedPage';
 import ListenerDashboard from './Dashboards/ListenerDashboard';
+import AdminDashboard from './Dashboards/AdminDashboard';
+import ArtistDashboard from './Dashboards/ArtistDashboard';
 
 export default function Dashboard() {
   const page = useTypedPage();
@@ -22,7 +24,11 @@ export default function Dashboard() {
       <div className="py-4">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {user && user.role === 'listener' ? <ListenerDashboard user={user}  /> : null}
+            {user && user.role === 'listener' ? <ListenerDashboard /> : null}
+            {user && user.role === 'artist' ? <ArtistDashboard  /> : null}
+            {user && user.role === 'admin' ? <AdminDashboard  /> : null}
+
+
         </div>
       </div>
     </AppLayout>

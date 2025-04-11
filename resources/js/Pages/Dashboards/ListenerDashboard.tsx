@@ -23,18 +23,7 @@ const recommendedTracks = [
   { title: 'Kiss Me More', artist: 'Doja Cat', album: 'Planet Her' },
 ];
 
-export default function ListenerDashboard({ user }: { user: User }) {
-  // States for controlling the UI
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const toggleSearch = () => {
-    setIsSearchOpen(prev => !prev);
-    // setIsMobileMenuOpen(false);
-  };
-  // Handle search input change
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
+export default function ListenerDashboard() {
 
   return (
     <div className="py-12">

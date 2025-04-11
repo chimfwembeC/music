@@ -98,8 +98,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
       )}
     >
       {/* <!-- Profile Photo --> */}
-      {page.props.jetstream.managesProfilePhotos ? (
-        <div className="col-span-6 sm:col-span-4">
+      <div className="col-span-6 sm:col-span-4">
           {/* <!-- Profile Photo File Input --> */}
           <input
             type="file"
@@ -129,7 +128,7 @@ export default function UpdateProfileInformationForm({ user }: Props) {
               <img
                 src={user.profile_photo_url}
                 alt={user.name}
-                className="rounded-full h-20 w-20 object-cover"
+                className="rounded-lg h-20 w-20 object-cover"
               />
             </div>
           )}
@@ -154,8 +153,6 @@ export default function UpdateProfileInformationForm({ user }: Props) {
 
           <InputError message={form.errors.photo} className="mt-2" />
         </div>
-      ) : null}
-
       {/* <!-- Name --> */}
       <div className="col-span-6 sm:col-span-4">
         <InputLabel htmlFor="name" value="Name" />
