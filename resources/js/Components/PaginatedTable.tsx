@@ -1,18 +1,30 @@
-import React, { useState, ReactNode } from 'react';
+import React, { useState } from 'react';
+import ToggleSwitch from '@/Components/ToggleSwitch';
+import get from 'lodash/get';
 
-interface PaginatedTableProps<T> {
+type ColumnType = 'text' | 'toggle' | 'custom';
+
+interface Column<T> {
+  label: string;
+  key?: string;
+  type?: ColumnType;
+  onToggle?: (id: number, newValue: boolean) => void;
+  render?: (item: T) => React.ReactNode;
+}
+
+interface Props<T> {
   items: T[];
   itemsPerPage?: number;
-  renderRow: (item: T, index: number) => ReactNode;
-  headers: ReactNode;
+  columns: Column<T>[];
+  getRowId: (item: T) => number;
 }
 
 export default function PaginatedTable<T>({
   items,
   itemsPerPage = 10,
-  renderRow,
-  headers,
-}: PaginatedTableProps<T>) {
+  columns,
+  getRowId,
+}: Props<T>) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(items.length / itemsPerPage);
 
@@ -25,20 +37,54 @@ export default function PaginatedTable<T>({
   const handleNext = () => setCurrentPage(p => Math.min(p + 1, totalPages));
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow-md bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+    <div className="overflow-x-auto rounded-lg shadow bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
       <table className="min-w-full text-sm text-left">
-        <thead className="bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400 uppercase text-xs">
-          <tr>{headers}</tr>
+        <thead className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 uppercase text-xs">
+          <tr>
+            {columns.map((col, idx) => (
+              <th key={idx} className="px-4 py-3">{col.label}</th>
+            ))}
+          </tr>
         </thead>
         <tbody>
           {paginatedItems.length > 0 ? (
-            paginatedItems.map((item, index) => renderRow(item, index))
+            paginatedItems.map((item, idx) => (
+              <tr key={getRowId(item)} className={idx % 2 === 1 ? 'bg-gray-50 dark:bg-gray-800/50' : ''}>
+                {columns.map((col, i) => {
+                  const id = getRowId(item);
+
+                  if (col.type === 'toggle' && col.key) {
+                    const value = get(item, col.key) as boolean;
+                    return (
+                      <td key={i} className="px-4 py-3">
+                        <ToggleSwitch
+                          checked={value}
+                          onChange={(checked) => col.onToggle?.(id, checked)}
+                          color={col.label === 'Published' ? 'green' : 'yellow'}
+                        />
+                      </td>
+                    );
+                  }
+
+                  if (col.type === 'custom' && col.render) {
+                    return (
+                      <td key={i} className="px-4 py-3">
+                        {col.render(item)}
+                      </td>
+                    );
+                  }
+
+                  return (
+                    <td key={i} className="px-4 py-3">
+                      {col.key ? get(item, col.key) ?? '—' : ''}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))
           ) : (
             <tr>
-              <td
-                colSpan={100}
-                className="text-center px-4 py-6 text-gray-500 dark:text-gray-400"
-              >
+              <td colSpan={columns.length} className="text-center px-4 py-6 text-gray-500 dark:text-gray-400">
                 No records found.
               </td>
             </tr>
@@ -55,9 +101,7 @@ export default function PaginatedTable<T>({
           >
             Prev
           </button>
-          <span className="text-sm">
-            Page {currentPage} of {totalPages}
-          </span>
+          <span className="text-sm">Page {currentPage} of {totalPages}</span>
           <button
             onClick={handleNext}
             disabled={currentPage === totalPages}
