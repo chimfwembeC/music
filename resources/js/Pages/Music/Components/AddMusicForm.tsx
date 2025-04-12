@@ -13,28 +13,6 @@ import { useForm } from '@inertiajs/react';
 import classNames from 'classnames';
 import React, { useRef, useState } from 'react';
 
-interface Music {
-  id: number;
-  title: string;
-  slug: string;
-  artist_id: number;
-  genre_id: number;
-  album_id?: number | null;
-  file_url: string;
-  original_filename?: string | null;
-  image_url?: string | null;
-  download_counts: number;
-  duration: number;
-  is_published: boolean;
-  created_at?: string;
-  updated_at?: string;
-
-  // Optional related models (if eager-loaded from backend)
-  artist?: Artist;
-  genre?: Genre;
-  album?: Album;
-}
-
 interface Props {
   //   music: Music;
   albums: Album[];

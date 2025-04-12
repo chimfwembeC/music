@@ -74,23 +74,36 @@ export default function AppLayout({
                     Dashboard
                   </NavLink>
 
-                  {page.props.auth.user?.role === 'admin' ?
-                   <NavLink
-                   href={route('tracks.index')}
-                   active={route().current('tracks')}
-                 >
-                   Music
-                 </NavLink>
+                  <NavLink
+                    href={route('tracks.index')}
+                    active={route().current('tracks*')}
+                  >
+                    Music
+                  </NavLink>
 
-                  : null}
+                  {page.props.auth.user?.role === 'admin' ? (
+                    <NavLink
+                      href={route('artists.index')}
+                      active={route().current('artists*')}
+                    >
+                      Artists
+                    </NavLink>
+                  ) : null}
+
+                  <NavLink
+                    href={route('blogs.index')}
+                    active={route().current('blogs*')}
+                  >
+                    Blogs
+                  </NavLink>
                 </div>
               </div>
 
-              <div className="hidden sm:flex sm:items-center sm:ml-6">                
-              <div className="hidden sm:block">
-                            {/* Your DarkModeToggle component */}
-                            <DarkModeToggle />
-                        </div>
+              <div className="hidden sm:flex sm:items-center sm:ml-6">
+                <div className="hidden sm:block">
+                  {/* Your DarkModeToggle component */}
+                  <DarkModeToggle />
+                </div>
                 {/* <!-- Settings Dropdown --> */}
                 <div className="ml-3 relative border border-gray-400 dark:border-purple-800 rounded-lg p-[3px] ">
                   <Dropdown
@@ -209,6 +222,22 @@ export default function AppLayout({
               >
                 Dashboard
               </ResponsiveNavLink>
+
+              <ResponsiveNavLink
+                href={route('tracks.index')}
+                active={route().current('tracks*')}
+              >
+                Music
+              </ResponsiveNavLink>
+
+              {page.props.auth.user?.role === 'admin' ? (
+                <ResponsiveNavLink
+                  href={route('artists.index')}
+                  active={route().current('artists*')}
+                >
+                  Artists
+                </ResponsiveNavLink>
+              ) : null}
             </div>
 
             {/* <!-- Responsive Settings Options --> */}

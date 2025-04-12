@@ -43,7 +43,7 @@ class ArtistController extends Controller
         ]);
 
         // Handle the image upload if an image is provided
-        $image_url = $request->hasFile('image_url') ? $request->file('image_url')->store('public/artist_images') : null;
+        $image_url = $request->hasFile('image_url') ? $request->file('image_url')->store('artist_images','public') : null;
 
         // Create a new artist
         Artist::create([
@@ -69,8 +69,9 @@ class ArtistController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Artist $artist)
+    public function edit($slug)
     {
+        $artist = Artist::where('slug',$slug)->first();
         // Show form for editing an existing artist
         return Inertia::render('Artist/Edit', [
             'artist' => $artist,
@@ -96,7 +97,7 @@ class ArtistController extends Controller
                 Storage::delete($artist->image_url);
             }
             // Store the new image
-            $image_url = $request->file('image_url')->store('public/artist_images');
+            $image_url = $request->file('image_url')->store('artist_images','public');
         } else {
             // Keep the old image URL if no new image is uploaded
             $image_url = $artist->image_url;

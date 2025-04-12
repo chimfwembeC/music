@@ -41,6 +41,7 @@ Route::resource('genres', GenreController::class);
 
 // Resource routes for BlogController
 Route::resource('blogs', BlogController::class);
+Route::patch('/blogs/{id}/toggle-publish', [BlogController::class, 'togglePublish'])->name('blogs.toggle-publish');
 
 // Resource routes for MusicController
 Route::resource('tracks', MusicController::class);
@@ -50,8 +51,8 @@ Route::patch('/tracks/{id}/toggle-featured', [MusicController::class, 'toggleFea
 
 
 Route::get('/music', [PageController::class, 'music'])->name('music');
-Route::get('/blogs', [PageController::class, 'blogs'])->name('blogs');
-Route::get('/artists', [PageController::class, 'artists'])->name('artists');
+Route::get('/gists', [PageController::class, 'blogs'])->name('gists');
+// Route::get('/artists', [PageController::class, 'artists'])->name('artists');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 

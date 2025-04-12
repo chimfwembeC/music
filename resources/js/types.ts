@@ -101,12 +101,14 @@ export interface TeamInvitation {
 export interface Genre {
     id: number;
     name: string;
+    slug: string;
     description: string;
 }
 
 export interface Artist {
     id: number;
     name: string;
+    slug?: string;
     bio: string;
     image_url: string;
 }
@@ -137,7 +139,9 @@ export interface Music {
 export interface Blog {
     id: number;
     title: string;
+    slug: string;
     content: string;
+    is_published: boolean;
     image_url: string;
     created_at: string;
 }
