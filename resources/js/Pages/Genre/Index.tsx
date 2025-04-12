@@ -19,6 +19,7 @@ export default function Index({ genres }: Genre) {
         </h2>
       )}
     >
+      <div className="py-12">
       <div className="max-w-5xl h-screen m-auto mt-4">
         <div className="flex justify-end mb-4">
           <PrimaryButton onClick={() => router.get(route('genres.create'))}>
@@ -55,6 +56,7 @@ export default function Index({ genres }: Genre) {
             },
           ]}
         />
+      </div>
       </div>
     </AppLayout>
   );
