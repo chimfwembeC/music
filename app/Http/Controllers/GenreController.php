@@ -63,8 +63,9 @@ class GenreController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Genre $genre)
+    public function edit($slug)
     {
+        $genre = Genre::where('slug', $slug)->first();
         // Show the form to edit an existing genre.
         return Inertia::render('Genre/Edit', [
             'genre' => $genre,

@@ -38,6 +38,8 @@
     "react-dom": "^18.3.1",
     "react-infinite-scroll-component": "^6.1.0",
     "react-responsive-masonry": "^2.7.1",
+    "recharts": "^2.15.2",
+    "sweetalert2": "^11.17.2",
     "ziggy-js": "^2.5.0"
   },
   "prettier": {
