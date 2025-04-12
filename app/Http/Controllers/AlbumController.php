@@ -49,16 +49,18 @@ class AlbumController extends Controller
             'artist_id' => 'required|exists:artists,id',
             'genre_id' => 'required|exists:genres,id',
             // 'file_url' => 'required|file|mimes:mp3,wav,ogg|max:10240', // 10MB limit for music files
-            'image_url' => 'nullable|image|max:2048', // 2MB limit for image files
-            'tracks' => 'required|integer',
+            'image_url' => 'nullable|image|max:2048', // 2MB limit for image files    
+            'is_published' => 'sometimes|boolean',
+            'is_featured' => 'sometimes|boolean',
         ]);
 
         // Handle file uploads
         $file = $request->file('file_url');
         // $file_url = $file->store('public/album');  // Store the file in the public/album directory
         // $original_filename = $file->getClientOriginalName(); // Get the original filename
-        $image_url = $request->hasFile('image_url') ? $request->file('image_url')->store('public/images') : null;
-
+        $image_url = $request->hasFile('image_url') ? $request->file('image_url')->store('images','public') : null;
+        $isPublished = $request->boolean('is_published');
+        $isFeatured = $request->boolean('is_featured');
         // Store album record, including the original filename
         Album::create([
             'title' => $validated['title'],
@@ -67,13 +69,39 @@ class AlbumController extends Controller
             // 'file_url' => $file_url,
             // 'original_filename' => $original_filename,  // Store the original filename here
             'image_url' => $image_url,
-            'tracks' => $validated['tracks'],
+            'is_published' => $isPublished,
+            'is_featured' => $isFeatured,            
         ]);
 
         return redirect()->route('albums.index')->with('success', 'Album created successfully.');
     }
 
 
+    public function togglePublish(Request $request, $id)
+    {
+        $request->validate([
+            'is_published' => 'required|boolean',
+        ]);
+    
+        $album = Album::findOrFail($id);
+        $album->is_published = $request->boolean('is_published');
+        $album->save();
+    
+        return back()->with('message', 'Track publish status updated.');
+    }
+    
+    public function toggleFeatured(Request $request, $id)
+    {
+        $request->validate([
+            'is_featured' => 'required|boolean',
+        ]);
+    
+        $album = Album::findOrFail($id);
+        $album->is_featured = $request->boolean('is_featured');
+        $album->save();
+    
+        return back()->with('message', 'Track featured status updated.');
+    }
     /**
      * Display the specified resource.
      */
@@ -87,8 +115,9 @@ class AlbumController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Album $album)
+    public function edit($slug)
     {
+        $album = Album::where('slug', $slug)->firstOrFail();
         $artists = Artist::all();
         $genres = Genre::all();
         return Inertia::render('Album/Edit', [
@@ -109,8 +138,9 @@ class AlbumController extends Controller
             'artist_id' => 'required|exists:artists,id',
             'genre_id' => 'required|exists:genres,id',
             // 'file_url' => 'nullable|file|mimes:mp3,wav,ogg|max:10240',
-            'image_url' => 'nullable|image|max:2048',
-            'tracks' => 'required|integer',
+            'image_url' => 'nullable|image|max:2048',            
+            'is_published' => 'sometimes|boolean',
+            'is_featured' => 'sometimes|boolean',
         ]);
 
         // Handle file uploads if provided
@@ -128,105 +158,27 @@ class AlbumController extends Controller
         if ($request->hasFile('image_url')) {
             // Delete old image if a new one is uploaded
             Storage::delete($album->image_url);
-            $image_url = $request->file('image_url')->store('public/images');
+            $image_url = $request->file('image_url')->store('images','public');
         } else {
             $image_url = $album->image_url;
         }
+        $isPublished = $request->boolean('is_published');
+        $isFeatured = $request->boolean('is_featured');
 
         // Update the album record
         $album->update([
             'title' => $validated['title'],
             'artist_id' => $validated['artist_id'],
             'genre_id' => $validated['genre_id'],
+            'is_published' => $isPublished,
+            'is_featured' => $isFeatured,
             // 'file_url' => $file_url,
             // 'original_filename' => $original_filename, // Store the original filename
-            'image_url' => $image_url,
-            'tracks' => $validated['tracks'],
+            'image_url' => $image_url,            
         ]);
 
         return redirect()->route('albums.index')->with('success', 'Album updated successfully.');
     }
-
-    // public function downloadAlbum($id)
-    // {
-    //     try {
-    //         // Load the album and its associated music files.
-    //         $album = Album::with('music')->findOrFail($id);
-
-    //         // Generate a clean slug from the album title (or use the stored slug if available).
-    //         $albumSlug = $album->slug ?? \Illuminate\Support\Str::slug($album->title);
-
-    //         // Correct the album folder path to match the actual storage location.
-    //         $albumFolder = public_path("storage/uploads/albums/{$album->slug}");
-
-    //         // Debugging step: Check if the folder exists.
-    //         if (!is_dir($albumFolder)) {
-    //             return response()->json([
-    //                 'message' => 'Album folder does not exist.',
-    //                 'folder_path' => $albumFolder
-    //             ], 404);
-    //         }
-
-    //         // Define the target directory for the ZIP file.
-    //         $zipDirectory = public_path("storage/uploads/albums");
-
-    //         if (!is_dir($zipDirectory)) {
-    //             mkdir($zipDirectory, 0777, true); // Ensure the directory exists
-    //         }
-
-    //         // Define a temporary ZIP filename using the album slug.
-    //         $zipFileName = "{$zipDirectory}/{$albumSlug}.zip";
-
-    //         // Remove any existing ZIP file before creating a new one.
-    //         if (file_exists($zipFileName)) {
-    //             unlink($zipFileName);
-    //         }
-
-    //         // Create the ZIP archive.
-    //         $zip = new \ZipArchive;
-
-
-    //         if ($zip->open($zipFileName, \ZipArchive::CREATE) === true) {
-    //             foreach ($album->music as $song) {
-
-    //                 // Extract just the filename from the song's file_url.
-    //                 $filename = basename($song->file_url);
-    //                 // Build the full path to the music file in the storage folder.
-    //                 $filePath = "{$albumFolder}/{$filename}";
-
-    //                 // return response($filePath);
-
-
-    //                 if (file_exists($filePath)) {
-    //                     // Define the path inside the ZIP archive.
-    //                     $localName = "{$albumSlug}/" . \Illuminate\Support\Str::slug($song->original_filename) . ".mp3";
-    //                     $zip->addFile($filePath, $localName);
-    //                 } else {
-    //                     return response()->json([
-    //                         'message' => "File not found: {$filePath}",
-    //                     ], 404);
-    //                 }
-    //             }
-    //             $zip->close();
-    //         } else {
-    //             return response()->json(['message' => 'Failed to create ZIP archive'], 500);
-    //         }
-
-    //         // Return the ZIP file as a download response.
-    //         $response = response()->download($zipFileName);
-
-    //         // Register a shutdown function to delete the ZIP file after the response is sent.
-    //         register_shutdown_function(function () use ($zipFileName) {
-    //             if (file_exists($zipFileName)) {
-    //                 unlink($zipFileName);
-    //             }
-    //         });
-
-    //         return $response;
-    //     } catch (\Exception $e) {
-    //         return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
-    //     }
-    // }
 
     public function downloadAlbum($id)
     {

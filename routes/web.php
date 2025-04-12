@@ -35,6 +35,8 @@ Route::resource('artists', ArtistController::class);
 
 // Resource routes for AlbumController
 Route::resource('albums', AlbumController::class);
+Route::patch('/albums/{id}/toggle-publish', [AlbumController::class, 'togglePublish'])->name('albums.toggle-publish');
+Route::patch('/albums/{id}/toggle-featured', [AlbumController::class, 'toggleFeatured'])->name('albums.toggle-featured');
 
 // Resource routes for GenreController
 Route::resource('genres', GenreController::class);

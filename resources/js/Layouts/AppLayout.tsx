@@ -81,13 +81,28 @@ export default function AppLayout({
                     Music
                   </NavLink>
 
+                  <NavLink
+                    href={route('albums.index')}
+                    active={route().current('albums*')}
+                  >
+                    Albums
+                  </NavLink>
                   {page.props.auth.user?.role === 'admin' ? (
+                  <>
                     <NavLink
                       href={route('artists.index')}
                       active={route().current('artists*')}
                     >
                       Artists
                     </NavLink>
+
+                    <NavLink
+                      href={route('genres.index')}
+                      active={route().current('genres*')}
+                    >
+                      Genres
+                    </NavLink>
+                  </>
                   ) : null}
 
                   <NavLink
@@ -230,13 +245,29 @@ export default function AppLayout({
                 Music
               </ResponsiveNavLink>
 
+              <ResponsiveNavLink
+                href={route('albums.index')}
+                active={route().current('albums*')}
+              >
+                Music
+              </ResponsiveNavLink>
+
               {page.props.auth.user?.role === 'admin' ? (
-                <ResponsiveNavLink
-                  href={route('artists.index')}
-                  active={route().current('artists*')}
-                >
-                  Artists
-                </ResponsiveNavLink>
+                <>
+                  <ResponsiveNavLink
+                    href={route('artists.index')}
+                    active={route().current('artists*')}
+                  >
+                    Artists
+                  </ResponsiveNavLink>
+
+                  <ResponsiveNavLink
+                    href={route('genres.index')}
+                    active={route().current('genres*')}
+                  >
+                    Genres
+                  </ResponsiveNavLink>
+                </>
               ) : null}
             </div>
 
