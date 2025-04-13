@@ -65,32 +65,34 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
       </button>
 
       <AnimatePresence>
-        {showPicker && (
-          <motion.div
-            className="absolute bottom-10 left-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg flex gap-2 z-10"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-          >
-            {reactions.map(reaction => (
-              <motion.button
-                key={reaction.type}
-                onClick={() => handleReaction(reaction.type)}
-                whileHover={{ scale: 1.2 }}
-                className={`text-sm px-2 py-1 flex flex-col items-center ${
-                  userReaction === reaction.type ? 'ring-2 ring-blue-500' : ''
-                }`}
-                disabled={loading}
-              >
-                <span className="text-xl">{reaction.emoji}</span>
-                <span className="text-xs text-gray-500">
-                  {reactionCounts[reaction.type] || 0}
-                </span>
-              </motion.button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+  {showPicker && (
+    <motion.div
+      className="absolute bottom-10 left-0 bg-white dark:bg-gray-700 rounded-full p-2 shadow-lg flex gap-2 z-10"
+      initial={{ opacity: 0, y: 10 }} // Starts slightly below and invisible
+      animate={{ opacity: 1, y: 0 }} // Moves to position and fades in
+      exit={{ opacity: 0, y: 10 }} // Fades out and moves down
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }} // Adds springy motion
+    >
+      {reactions.map(reaction => (
+        <motion.button
+          key={reaction.type}
+          onClick={() => handleReaction(reaction.type)}
+          whileHover={{ scale: 1.2 }} // Slight scaling when hovered
+          className={`text-sm px-2 py-1 flex flex-col items-center ${
+            userReaction === reaction.type ? 'ring-2 ring-blue-500' : ''
+          }`}
+          disabled={loading}
+        >
+          <span className="text-xl">{reaction.emoji}</span>
+          <span className="text-xs text-gray-500">
+            {reactionCounts[reaction.type] || 0}
+          </span>
+        </motion.button>
+      ))}
+    </motion.div>
+  )}
+</AnimatePresence>
+
     </div>
   );
 };

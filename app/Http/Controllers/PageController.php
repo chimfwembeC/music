@@ -28,13 +28,32 @@ class PageController extends Controller
             // 'albums' => Album::with(['genre', 'artist'])->where('download_counts' >=  50)->latest()->limit(6)->get(),
         ]);
     }
-
+   
     public function blogs()
     {
+        $blogs = Blog::with(['author', 'reactions']) // Ensure reactions are included
+            ->withCount('comments') // Automatically adds 'comments_count' to each blog
+            ->get()
+            ->map(function ($blog) {
+                // Calculate reaction counts for each blog
+                $reactionCounts = $blog->reactions->groupBy('type')->map(function ($reactions) {
+                    return $reactions->count();
+                });
+    
+                // Add the reaction counts to the blog object
+                $blog->reaction_counts = $reactionCounts;
+    
+                // Optionally, you can manipulate the comment count here if you want
+                $blog->comment_count = $blog->comments_count;
+    
+                return $blog;
+            });
+    
         return Inertia::render('Pages/Blogs', [
-            'blogs' => Blog::latest()->get()
+            'blogs' => $blogs,
         ]);
     }
+    
 
     public function contact()
     {
