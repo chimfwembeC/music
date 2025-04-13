@@ -11,3 +11,5 @@ Route::get('/user', function (Request $request) {
 Route::get('/get-blogs', [\App\Http\Controllers\ApiController::class, 'getLatestBlogs'])
     ->name('api.blogs.index');
     // ->middleware('auth:sanctum');
+
+  

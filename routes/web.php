@@ -71,3 +71,14 @@ Route::post('/music/{id}/share', [MusicController::class, 'trackShare']);
 Route::get('/albums/{id}/download', [AlbumController::class, 'downloadAlbum']);
 
 
+
+Route::post('/blogs/{id}/react', [\App\Http\Controllers\ReactionController::class, 'react'])
+->name('api.blogs.react');
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/blogs/{blog}/comments', [CommentController::class, 'store']);
+    Route::post('/blogs/{blog}/reactions', [ReactionController::class, 'store']);
+});
+
+Route::get('/blogs/{blog}/comments', [CommentController::class, 'index']);
