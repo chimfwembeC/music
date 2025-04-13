@@ -11,24 +11,44 @@ use Illuminate\Support\Facades\Auth;
 
 class ReactionController extends Controller
 {
-    public function react(Request $request, Blog $blog)
+  
+    public function react(Request $request, $id)
     {
+        $blog = Blog::findOrFail($id);
+    
+        // Check if the user is authenticated
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+    
+        // Validate the reaction type
         $request->validate([
             'type' => 'required|in:like,love,haha,wow,sad,angry',
         ]);
     
-        // Remove existing reaction by user
-        $blog->reactions()->where('user_id', auth()->id())->delete();
+        // Remove the previous reaction by the current user
+        $blog->reactions()->where('user_id', Auth::id())->delete();
     
-        // Add new reaction
+        // Add the new reaction by the current user
         $blog->reactions()->create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'type' => $request->input('type'),
         ]);
     
+        // Get the updated count of reactions for each type
+        $counts = $blog->reactions()
+            ->selectRaw('type, COUNT(*) as count')
+            ->groupBy('type')
+            ->pluck('count', 'type');
+    
+        // Get the current user's reaction (for displaying the user's reaction)
+        $userReaction = $request->input('type');
+    
         return response()->json([
             'message' => 'Reacted!',
-            'reactions' => $blog->reactions()->countBy('type'),
+            'reactions' => $counts,       // Reaction counts for each type
+            'userReaction' => $userReaction, // The current user's reaction
         ]);
     }
+    
 }

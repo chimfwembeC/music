@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import PrimaryButton from './PrimaryButton';
 
 const reactions = [
   { type: 'like', emoji: '👍' },
@@ -12,24 +14,35 @@ const reactions = [
 
 interface ReactionButtonProps {
   blogId: number;
-  onReact?: (type: string) => void;
+  initialReaction?: string;
+  initialCounts?: Record<string, number>;
 }
 
-const ReactionButton: React.FC<ReactionButtonProps> = ({ blogId, onReact }) => {
+const ReactionButton: React.FC<ReactionButtonProps> = ({
+  blogId,
+  initialReaction = '',
+  initialCounts = {},
+}) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [userReaction, setUserReaction] = useState(initialReaction);
+  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>(initialCounts);
+  const [loading, setLoading] = useState(false);
 
   const handleReaction = async (type: string) => {
     setShowPicker(false);
+    setLoading(true);
 
-    await fetch(`/blogs/${blogId}/react`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ type }),
-    });
+    try {
+      const response = await axios.post(`/blogs/${blogId}/react`, { type });
+      const { reactions, userReaction: updatedReaction } = response.data;
 
-    onReact?.(type);
+      setUserReaction(updatedReaction);
+      setReactionCounts(reactions);
+    } catch (error) {
+      console.error('Reaction failed:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,7 +51,16 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({ blogId, onReact }) => {
       onMouseEnter={() => setShowPicker(true)}
       onMouseLeave={() => setShowPicker(false)}
     >
-      <button className="text-xl hover:scale-110 transition">👍</button>
+      <PrimaryButton
+        className="text-xl hover:scale-110 transition"
+        onClick={() => setShowPicker(!showPicker)}
+        disabled={loading}
+        title={userReaction ? `You reacted: ${userReaction}` : 'React'}
+      >
+        {userReaction
+          ? reactions.find((r) => r.type === userReaction)?.emoji
+          : '👍'}
+      </PrimaryButton>
 
       <AnimatePresence>
         {showPicker && (
@@ -53,9 +75,15 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({ blogId, onReact }) => {
                 key={reaction.type}
                 onClick={() => handleReaction(reaction.type)}
                 whileHover={{ scale: 1.2 }}
-                className="text-2xl"
+                className={`text-sm px-2 py-1 flex flex-col items-center ${
+                  userReaction === reaction.type ? 'ring-2 ring-blue-500' : ''
+                }`}
+                disabled={loading}
               >
-                {reaction.emoji}
+                <span className="text-xl">{reaction.emoji}</span>
+                <span className="text-xs text-gray-500">
+                  {reactionCounts[reaction.type] || 0}
+                </span>
               </motion.button>
             ))}
           </motion.div>

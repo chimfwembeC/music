@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('type', ReactionType::values());
             $table->timestamps();
+
+            $table->unique(['user_id', 'blog_id']); // one reaction per user per blog
         });
     }
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AlbumController;
 use App\Http\Controllers\ArtistController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\PageController;
@@ -73,12 +74,12 @@ Route::get('/albums/{id}/download', [AlbumController::class, 'downloadAlbum']);
 
 
 Route::post('/blogs/{id}/react', [\App\Http\Controllers\ReactionController::class, 'react'])
-->name('api.blogs.react');
+->name('blogs.react');
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/blogs/{blog}/comments', [CommentController::class, 'store']);
-    Route::post('/blogs/{blog}/reactions', [ReactionController::class, 'store']);
+    Route::post('/blogs/{id}/comments', [CommentController::class, 'store']);
+    // Route::post('/blogs/{id}/reactions', [ReactionController::class, 'store']);
 });
 
-Route::get('/blogs/{blog}/comments', [CommentController::class, 'index']);
+Route::get('/blogs/{id}/comments', [CommentController::class, 'index']);

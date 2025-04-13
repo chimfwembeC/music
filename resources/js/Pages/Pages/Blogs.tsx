@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User } from 'lucide-react';
+import { MessageCircleMore, User } from 'lucide-react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Link } from '@inertiajs/react';
@@ -28,7 +28,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
     search: '',
     category: '', // You can add a category filter here
   });
-
+  const [latestComment, setLatestComment] = useState<any | null>(null);
   const [displayedBlogs, setDisplayedBlogs] = useState<Blog[]>(blogs);
 
   // Simulate an API call to get more blogs
@@ -110,7 +110,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                     transition={{ duration: 0.5 }}
                   >
                     <img
-                      src={blog.image_url}
+                      src={`/storage/${blog.image_url}`}
                       alt={blog.title}
                       className="w-full h-48 object-cover rounded-lg mb-4"
                     />
@@ -123,7 +123,8 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                         onClick={() => openCommentSheet(blog.id)}
                         className="text-sm text-blue-500 hover:text-blue-400"
                       >
-                        View Comments
+                        <MessageCircleMore className="w-6 h-6 inline-block mr-1" />
+                        {/* {blog.comments_count} Comments */}
                       </button>
                     </div>
                   </motion.div>
@@ -169,14 +170,14 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                     </button>
                   </div>
                   <CommentForm
-                    blogId={activeBlogId}
-                    onNewComment={(newComment) =>
-                      setComments((prev) => [newComment, ...prev])
-                    }
-                  />
-                  <div className="mt-4">
+  blogId={activeBlogId}
+  onNewComment={(comment) => setLatestComment(comment)}
+/>
+
+<CommentList blogId={activeBlogId} newComment={latestComment} />
+                  {/* <div className="mt-4">
                     <CommentList blogId={activeBlogId} />
-                  </div>
+                  </div> */}
                 </motion.div>
               </motion.div>
             )}
