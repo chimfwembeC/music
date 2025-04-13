@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircleMore, User } from 'lucide-react';
+import { MessageCircleMore, User, X } from 'lucide-react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Link } from '@inertiajs/react';
@@ -36,9 +36,9 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
     const moreBlogs = await fetch(
       `/api/blogs?page=${page + 1}&search=${filters.search}`,
     )
-      .then((res) => res.json())
-      .then((data) => data.blogs);
-    setDisplayedBlogs((prevBlogs) => [...prevBlogs, ...moreBlogs]);
+      .then(res => res.json())
+      .then(data => data.blogs);
+    setDisplayedBlogs(prevBlogs => [...prevBlogs, ...moreBlogs]);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,11 +97,13 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
             dataLength={displayedBlogs.length}
             next={fetchMoreBlogs}
             hasMore={displayedBlogs.length < total}
-            loader={<p className="text-center text-gray-400">Loading more blogs...</p>}
+            loader={
+              <p className="text-center text-gray-400">Loading more blogs...</p>
+            }
           >
             {displayedBlogs.length ? (
               <div className="grid gap-6 md:grid-cols-1">
-                {displayedBlogs.map((blog) => (
+                {displayedBlogs.map(blog => (
                   <motion.div
                     key={blog.id}
                     className="bg-gray-100 dark:bg-gray-800 border border-gray-400/50 dark:border-gray-600 rounded-lg p-4 transition-all duration-300"
@@ -115,9 +117,11 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                       className="w-full h-48 object-cover rounded-lg mb-4"
                     />
                     <h3 className="text-xl font-semibold mb-2">{blog.title}</h3>
-                    <p className="text-gray-400">{blog.content.slice(0, 100)}...</p>
+                    <p className="text-gray-400">
+                      {blog.content.slice(0, 100)}...
+                    </p>
                     {/* Blog card bottom actions */}
-                    <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center gap-4 mt-4">
                       <ReactionButton blogId={blog.id} />
                       <button
                         onClick={() => openCommentSheet(blog.id)}
@@ -158,7 +162,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                   drag="y"
                   dragConstraints={{ top: 0, bottom: 0 }}
                   onDragEnd={handleDragEnd}
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={e => e.stopPropagation()}
                 >
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-lg font-bold">Comments</h2>
@@ -166,15 +170,18 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                       onClick={closeCommentSheet}
                       className="text-gray-500 hover:text-red-500"
                     >
-                      Close
+                      <X className="w-6 h-6" />
                     </button>
                   </div>
                   <CommentForm
-  blogId={activeBlogId}
-  onNewComment={(comment) => setLatestComment(comment)}
-/>
+                    blogId={activeBlogId}
+                    onNewComment={comment => setLatestComment(comment)}
+                  />
 
-<CommentList blogId={activeBlogId} newComment={latestComment} />
+                  <CommentList
+                    blogId={activeBlogId}
+                    newComment={latestComment}
+                  />
                   {/* <div className="mt-4">
                     <CommentList blogId={activeBlogId} />
                   </div> */}
