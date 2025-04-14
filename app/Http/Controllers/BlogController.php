@@ -21,6 +21,30 @@ class BlogController extends Controller
         ]);
     }
 
+
+    public function getBlogs(Request $request)
+    {
+        $query = Blog::query();
+
+        // Apply search filter
+        if ($search = $request->input('search')) {
+            $query->where('title', 'like', "%{$search}%")
+                  ->orWhere('content', 'like', "%{$search}%");
+        }
+
+        // Apply category filter
+        if ($category = $request->input('category')) {
+            $query->where('category', $category); // assuming a "category" column exists
+        }
+
+        // Pagination (default 10 per page)
+        $blogs = $query->latest()->paginate(10);
+
+        return response()->json([
+            'blogs' => $blogs->items(),
+            'total' => $blogs->total(),
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */

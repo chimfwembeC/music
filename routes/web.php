@@ -78,8 +78,28 @@ Route::post('/blogs/{id}/react', [\App\Http\Controllers\ReactionController::clas
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/blogs/{id}/comments', [CommentController::class, 'store']);
-    // Route::post('/blogs/{id}/reactions', [ReactionController::class, 'store']);
+    // Create comment or reply
+    Route::post('/blogs/{blog}/comments', [CommentController::class, 'store']);
+    
+    // Edit or delete a comment or reply
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 });
 
-Route::get('/blogs/{id}/comments', [CommentController::class, 'index']);
+Route::get('/get_blogs', [BlogController::class, 'getBlogs']);
+// Public routes
+Route::get('/blogs/{blog}/comments', [CommentController::class, 'index']); // Top-level comments
+Route::get('/comments/{comment}/replies', [CommentController::class, 'replies']); // Replies to a comment
+Route::post('/comments/{comment}/reply', [CommentController::class, 'reply']);
+
+// Authenticated routes for users to perform actions on replies
+Route::middleware('auth:sanctum')->group(function () {
+    // Route to store a new reply to a comment
+    Route::post('/comments/{id}/reply', [CommentController::class, 'store']);
+
+    // Route to update an existing reply
+    Route::put('/replies/{reply}', [CommentController::class, 'update']);
+
+    // Route to delete a reply
+    Route::delete('/replies/{reply}', [CommentController::class, 'destroy']);
+});

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { MessageCircleMore, User, X } from 'lucide-react';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { Cpu, Heart, List, MessageCircleMore, Music, User } from 'lucide-react';
+import { motion } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Link } from '@inertiajs/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ReactionButton from '@/Components/ReactionButton';
-import CommentForm from '@/Components/CommentForm';
-import CommentList from '@/Components/CommentList';
+import useTypedPage from '@/Hooks/useTypedPage';
+import CommentSection from '@/Components/CommentSection'; // Import the CommentSection
 
 // Types
 interface Blog {
@@ -20,22 +20,32 @@ interface Blog {
 interface BlogsPageProps {
   blogs: Blog[];
   total: number; // Total number of blogs (for infinite scroll pagination)
-  page: number; // Current page (for infinite scroll pagination)
 }
 
-const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
+const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total }) => {
   const [filters, setFilters] = useState({
     search: '',
     category: '', // You can add a category filter here
   });
   const [latestComment, setLatestComment] = useState<any | null>(null);
   const [displayedBlogs, setDisplayedBlogs] = useState<Blog[]>(blogs);
+  const page = useTypedPage();
+  const user = page.props.auth.user;
+  const spring = {
+    type: 'spring',
+    stiffness: 500,
+    damping: 30,
+  };
 
+  const categoryIcons: Record<string, JSX.Element> = {
+    All: <List className="w-4 h-4 mr-1" />,
+    Tech: <Cpu className="w-4 h-4 mr-1" />,
+    Music: <Music className="w-4 h-4 mr-1" />,
+    Lifestyle: <Heart className="w-4 h-4 mr-1" />,
+  };
   // Simulate an API call to get more blogs
   const fetchMoreBlogs = async () => {
-    const moreBlogs = await fetch(
-      `/api/blogs?page=${page + 1}&search=${filters.search}`,
-    )
+    const moreBlogs = await fetch(`/get_blogs?page=search=${filters.search}`)
       .then(res => res.json())
       .then(data => data.blogs);
     setDisplayedBlogs(prevBlogs => [...prevBlogs, ...moreBlogs]);
@@ -64,34 +74,56 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
     }
   };
 
-  console.log('blogs', blogs);
-
   return (
     <GuestLayout title="Blogs">
       <div className="min-h-screen bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 dark:text-white text-gray-600">
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-6">Blogs</h1>
+          <h1 className="text-3xl font-bold mb-6">Celebrity News & Gist</h1>
 
-          {/* Filters */}
-          <div className="flex justify-between mb-6">
-            <input
-              type="text"
-              value={filters.search}
-              onChange={handleSearchChange}
-              placeholder="Search Blogs"
-              className="w-full max-w-xs p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-white"
-            />
-            <select
-              value={filters.category}
-              onChange={handleCategoryChange}
-              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-white ml-4"
-            >
-              <option value="">All Categories</option>
-              <option value="Tech">Tech</option>
-              <option value="Music">Music</option>
-              <option value="Lifestyle">Lifestyle</option>
-              {/* Add more categories as needed */}
-            </select>
+          {/* Filters with animated bubble */}
+          <div className="relative flex flex-wrap gap-2 mb-6">
+            {['All', 'Tech', 'Music', 'Lifestyle'].map(category => {
+              const isActive =
+                filters.category === (category === 'All' ? '' : category);
+
+              return (
+                <motion.button
+                  key={category}
+                  onClick={() =>
+                    setFilters({
+                      ...filters,
+                      category: category === 'All' ? '' : category,
+                    })
+                  }
+                  whileTap={{ scale: 0.95 }}
+                  transition={spring}
+                  className="relative overflow-hidden px-4 py-2 rounded-full text-sm font-medium border 
+          flex items-center z-10"
+                  style={{
+                    borderColor: isActive
+                      ? 'rgb(59, 130, 246)' // blue-500
+                      : 'var(--tw-border-opacity)',
+                    color: isActive ? 'white' : '',
+                  }}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="bubble"
+                      transition={spring}
+                      className="absolute inset-0 z-[-1] bg-blue-500 rounded-full"
+                    />
+                  )}
+                  {categoryIcons[category]}
+                  <span
+                    className={
+                      isActive ? 'text-white' : 'text-gray-600 dark:text-white'
+                    }
+                  >
+                    {category}
+                  </span>
+                </motion.button>
+              );
+            })}
           </div>
 
           {/* Infinite Scroll */}
@@ -118,7 +150,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                       alt={blog.title}
                       className="w-full h-48 object-cover rounded-t mb-4"
                     />
-                    <div className=" p-4">
+                    <div className="p-4">
                       <h3 className="text-xl font-semibold mb-2">
                         {blog.title}
                       </h3>
@@ -126,12 +158,11 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
                         {blog.content.slice(0, 100)}...
                       </p>
 
-                      {/* Blog card bottom actions */}
                       <div className="flex items-center gap-1 mt-4">
                         <ReactionButton
                           blogId={blog.id}
-                          initialCounts={blog.reaction_counts} // Pass reaction counts here
-                          initialReaction={blog.user_reaction} // Pass user-specific reaction if needed
+                          initialCounts={blog.reaction_counts}
+                          initialReaction={blog.user_reaction}
                         />
                         <button
                           onClick={() => openCommentSheet(blog.id)}
@@ -153,53 +184,15 @@ const BlogsPage: React.FC<BlogsPageProps> = ({ blogs, total, page }) => {
             )}
           </InfiniteScroll>
 
-          {/* Bottom Sheet for Comments */}
-          <AnimatePresence>
-            {activeBlogId !== null && (
-              <motion.div
-                className="fixed inset-0 bg-black/40 z-50 flex items-end justify-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={closeCommentSheet} // click backdrop to close
-              >
-                {/* Prevent clicks from closing when interacting with the sheet */}
-                <motion.div
-                  className="bg-white dark:bg-gray-900 w-full rounded-t-2xl p-4 h-[80vh] overflow-y-auto"
-                  initial={{ y: '100%' }}
-                  animate={{ y: 0 }}
-                  exit={{ y: '100%' }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  drag="y"
-                  dragConstraints={{ top: 0, bottom: 0 }}
-                  onDragEnd={handleDragEnd}
-                  onClick={e => e.stopPropagation()}
-                >
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-bold">Comments</h2>
-                    <button
-                      onClick={closeCommentSheet}
-                      className="text-gray-500 hover:text-red-500"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                  <CommentForm
-                    blogId={activeBlogId}
-                    onNewComment={comment => setLatestComment(comment)}
-                  />
-
-                  <CommentList
-                    blogId={activeBlogId}
-                    newComment={latestComment}
-                  />
-                  {/* <div className="mt-4">
-                    <CommentList blogId={activeBlogId} />
-                  </div> */}
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Render Comment Section */}
+          <CommentSection
+            activeBlogId={activeBlogId}
+            closeCommentSheet={closeCommentSheet}
+            latestComment={latestComment}
+            setLatestComment={setLatestComment}
+            user={user}
+            handleDragEnd={handleDragEnd}
+          />
         </div>
       </div>
     </GuestLayout>

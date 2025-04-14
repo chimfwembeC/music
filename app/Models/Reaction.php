@@ -11,4 +11,14 @@ class Reaction extends Model
     protected $casts = [
         'type' => ReactionType::class,
     ];
+
+    public function blog()
+    {
+        return $this->belongsTo(Blog::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

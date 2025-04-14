@@ -37,7 +37,7 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
   const isLoading = loading;
   const isDisabled = loading || !isLoggedIn;
 
-  console.log('user', user);
+  
   const handleReaction = async (type: string) => {
     setShowPicker(false);
     setLoading(true);

@@ -30,48 +30,52 @@ class PageController extends Controller
     }
    
     public function blogs()
-    {
-        $blogs = Blog::with(['author', 'reactions']) // Ensure reactions are included
-            ->withCount('comments')
-            ->get()
-            ->map(function ($blog) {
-                // Calculate reaction counts by grouping by 'type' and counting occurrences
-                $reactionCounts = $blog->reactions->groupBy('type')->map(fn($r) => $r->count());
-        
-                // Attach reaction counts to the blog
-                $blog->reaction_counts = $reactionCounts;
-        
-                // Get the logged-in user's reaction (if authenticated)
-                $blog->user_reaction = auth()->check()
-                    ? optional($blog->reactions->firstWhere('user_id', auth()->id()))->type
-                    : null;
-        
-                // Optional: If you want a flat comment count field
-                $blog->comment_count = $blog->comments_count;
-        
-                // Get recent reactors for the timeline (limit to the last 5)
-                $recentReactors = $blog->reactions->take(5)->map(function ($reaction) {
-                    $user = $reaction->user;
-                    return [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'avatar' => $user->avatar_url, // assuming you have an avatar_url attribute
-                        'reaction' => $reaction->type,
-                    ];
-                });
-        
-                // Attach recent reactors to the blog
-                $blog->recent_reactors = $recentReactors;
-        
-                return $blog;
+{
+    $blogs = Blog::with([
+            'author',
+            'reactions',
+            'comments' => fn($q) => $q->with(['user', 'replies.user'])->orderBy('created_at'),
+        ])
+        ->withCount('comments')
+        ->get()
+        ->map(function ($blog) {
+            $reactionCounts = $blog->reactions->groupBy('type')->map(fn($r) => $r->count());
+            $blog->reaction_counts = $reactionCounts;
+
+            $blog->user_reaction = auth()->check()
+                ? optional($blog->reactions->firstWhere('user_id', auth()->id()))->type
+                : null;
+
+            $blog->comment_count = $blog->comments_count;
+
+            $recentReactors = $blog->reactions->take(5)->map(function ($reaction) {
+                $user = $reaction->user;
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'avatar' => $user->profile_photo_url,
+                    'reaction' => $reaction->type,
+                ];
             });
-        
-        // Pass the blogs data to the Inertia view
-        return Inertia::render('Pages/Blogs', [
-            'blogs' => $blogs,
-        ]);
-    }
-        
+
+            $blog->recent_reactors = $recentReactors;
+
+            // 🧠 Include threaded comments (top-level with replies)
+            $blog->threaded_comments = $blog->comments
+                ->whereNull('parent_comment_id')
+                ->map(function ($comment) {
+                    $comment->replies = $comment->replies;
+                    return $comment;
+                });
+
+            return $blog;
+        });
+
+    return Inertia::render('Pages/Blogs', [
+        'blogs' => $blogs,
+    ]);
+}
+
     
 
     public function contact()
