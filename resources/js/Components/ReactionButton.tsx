@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import PrimaryButton from './PrimaryButton';
+import Swal from 'sweetalert2';
+import useTypedPage from '@/Hooks/useTypedPage';
 
 const reactions = [
   { type: 'like', emoji: '👍' },
@@ -28,7 +30,14 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
   const [reactionCounts, setReactionCounts] =
     useState<Record<string, number>>(initialCounts);
   const [loading, setLoading] = useState(false);
+  const page = useTypedPage();
+  const user = page.props.auth.user;
+  const isLoggedIn = !!user;
+  const isGuest = !isLoggedIn;
+  const isLoading = loading;
+  const isDisabled = loading || !isLoggedIn;
 
+  console.log('user',user);
   const handleReaction = async (type: string) => {
     setShowPicker(false);
     setLoading(true);
@@ -40,7 +49,28 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
       setUserReaction(updatedReaction);
       setReactionCounts(reactions);
     } catch (error) {
-      console.error('Reaction failed:', error);
+      
+      // console.error('Reaction failed:', error);
+      if (error.response?.status === 401) {
+        Swal.fire({
+          title: 'Unauthorized',
+          text: 'You need to register or login to react to blog posts.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Login',
+          cancelButtonText: 'Register',
+        }).then(result => {
+          const currentUrl = window.location.pathname;
+  
+          if (result.isConfirmed) {
+            window.location.href = `/login?redirect=${encodeURIComponent(currentUrl)}`;
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            window.location.href = `/register?redirect=${encodeURIComponent(currentUrl)}`;
+          }
+        });
+      } else {
+        Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+      }
     } finally {
       setLoading(false);
     }
@@ -52,17 +82,37 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
       onMouseEnter={() => setShowPicker(true)}
       onMouseLeave={() => setShowPicker(false)}
     >
-      <button
-        className="text-lg hover:scale-110 transition"
-        onClick={() => setShowPicker(!showPicker)}
-        disabled={loading}
-        title={userReaction ? `You reacted: ${userReaction}` : 'React'}
+   <motion.button
+  className="flex items-center gap-2 hover:scale-105 transition px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800"
+  onClick={() => setShowPicker(!showPicker)}
+  disabled={loading}
+  animate={{
+    scale: userReaction ? [1, 1.1, 1] : 1,
+  }}
+  transition={{ duration: 0.3 }}
+>
+  {reactions
+    .filter(reaction => reactionCounts[reaction.type]) // only show used reactions
+    .map(reaction => (
+      <span
+        key={reaction.type}
+        className={`flex items-center gap-1 text-sm ${
+          userReaction === reaction.type ? 'font-bold text-blue-500' : ''
+        }`}
       >
-        {userReaction
-          ? reactions.find(r => r.type === userReaction)?.emoji
-          : '👍'}{' '}
-        {Object.values(reactionCounts).reduce((sum, count) => sum + count, 0)}
-      </button>
+        <span>{reaction.emoji}</span>
+        <span>{reactionCounts[reaction.type]}</span>
+      </span>
+    ))}
+
+  {/* Fallback if no reactions */}
+  {Object.keys(reactionCounts).length === 0 && (
+    <span className="text-sm text-gray-500">React 👍</span>
+  )}
+</motion.button>
+
+
+
 
       <AnimatePresence>
   {showPicker && (
@@ -84,9 +134,9 @@ const ReactionButton: React.FC<ReactionButtonProps> = ({
           disabled={loading}
         >
           <span className="text-xl">{reaction.emoji}</span>
-          <span className="text-xs text-gray-500">
+          {/* <span className="text-xs text-gray-500">
             {reactionCounts[reaction.type] || 0}
-          </span>
+          </span> */}
         </motion.button>
       ))}
     </motion.div>

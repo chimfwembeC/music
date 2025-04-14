@@ -144,6 +144,8 @@ export interface Blog {
     is_published: boolean;
     image_url: string;
     created_at: string;
+    reaction_counts: Record<string, number>;
+    user_reaction: string | null;
 }
 
 export interface SearchResults {

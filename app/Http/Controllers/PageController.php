@@ -32,27 +32,46 @@ class PageController extends Controller
     public function blogs()
     {
         $blogs = Blog::with(['author', 'reactions']) // Ensure reactions are included
-            ->withCount('comments') // Automatically adds 'comments_count' to each blog
+            ->withCount('comments')
             ->get()
             ->map(function ($blog) {
-                // Calculate reaction counts for each blog
-                $reactionCounts = $blog->reactions->groupBy('type')->map(function ($reactions) {
-                    return $reactions->count();
-                });
-    
-                // Add the reaction counts to the blog object
+                // Calculate reaction counts by grouping by 'type' and counting occurrences
+                $reactionCounts = $blog->reactions->groupBy('type')->map(fn($r) => $r->count());
+        
+                // Attach reaction counts to the blog
                 $blog->reaction_counts = $reactionCounts;
-    
-                // Optionally, you can manipulate the comment count here if you want
+        
+                // Get the logged-in user's reaction (if authenticated)
+                $blog->user_reaction = auth()->check()
+                    ? optional($blog->reactions->firstWhere('user_id', auth()->id()))->type
+                    : null;
+        
+                // Optional: If you want a flat comment count field
                 $blog->comment_count = $blog->comments_count;
-    
+        
+                // Get recent reactors for the timeline (limit to the last 5)
+                $recentReactors = $blog->reactions->take(5)->map(function ($reaction) {
+                    $user = $reaction->user;
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'avatar' => $user->avatar_url, // assuming you have an avatar_url attribute
+                        'reaction' => $reaction->type,
+                    ];
+                });
+        
+                // Attach recent reactors to the blog
+                $blog->recent_reactors = $recentReactors;
+        
                 return $blog;
             });
-    
+        
+        // Pass the blogs data to the Inertia view
         return Inertia::render('Pages/Blogs', [
             'blogs' => $blogs,
         ]);
     }
+        
     
 
     public function contact()
