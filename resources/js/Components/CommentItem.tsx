@@ -138,37 +138,38 @@ export function CommentItem({
           />
         )}
 
-{comment.replies && comment.replies.length > 0 && (
-  <div className="mt-4 space-y-3 ml-4">
-    {(showAllReplies ? comment.replies : [comment.replies[0]]).map(reply => (
-      <div key={reply.id} className="w-full">
-        <CommentReply
-          blogId={blogId}
-          comment={reply}
-          user={user}
-          newCommentRef={newCommentRef}
-          activeReplyId={activeReplyId}
-          setActiveReplyId={setActiveReplyId}
-        />
-      </div>
-    ))}
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="mt-4 space-y-3 ml-4">
+            {(showAllReplies ? comment.replies : [comment.replies[0]]).map(
+              reply => (
+                <div key={reply.id} className="w-full">
+                  <CommentReply
+                    blogId={blogId}
+                    comment={reply}
+                    user={user}
+                    newCommentRef={newCommentRef}
+                    activeReplyId={activeReplyId}
+                    setActiveReplyId={setActiveReplyId}
+                  />                  
+                </div>                
+              ),
+            )}
 
-    {comment.replies.length > 1 && (
-      <button
-        onClick={() => setShowAllReplies(!showAllReplies)}
-        className="text-blue-500 text-xs flex items-center"
-      >
-        <ChevronDown
-          className={`w-3 h-3 mr-1 transition-transform ${
-            showAllReplies ? 'rotate-180' : ''
-          }`}
-        />
-        {showAllReplies ? 'Hide replies' : 'View more replies'}
-      </button>
-    )}
-  </div>
-)}
-
+            {comment.replies.length > 1 && (
+              <button
+                onClick={() => setShowAllReplies(!showAllReplies)}
+                className="text-blue-500 text-xs flex items-center"
+              >
+                <ChevronDown
+                  className={`w-3 h-3 mr-1 transition-transform ${
+                    showAllReplies ? 'rotate-180' : ''
+                  }`}
+                />
+                {showAllReplies ? 'Hide replies' : 'View more replies'}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -36,6 +36,8 @@ class PageController extends Controller
             'reactions',
             'comments' => fn($q) => $q->with(['user', 'replies.user'])->orderBy('created_at'),
         ])
+        ->where('is_published', true)
+        ->latest()
         ->withCount('comments')
         ->get()
         ->map(function ($blog) {
@@ -46,7 +48,21 @@ class PageController extends Controller
                 ? optional($blog->reactions->firstWhere('user_id', auth()->id()))->type
                 : null;
 
-            $blog->comment_count = $blog->comments_count;
+            
+                $blog->user_reaction = auth()->check()
+        ? optional($blog->reactions->firstWhere('user_id', auth()->id()))->type
+        : null;
+
+    $blog->user_reactions = $blog->reactions->map(function ($reaction) {
+        return [
+            'user_id' => $reaction->user_id,
+            'user_name' => $reaction->user->name,
+            'avatar' => $reaction->user->profile_photo_url,
+            'reaction' => $reaction->type,
+            'created_at' => $reaction->created_at->toDateTimeString(),
+        ];
+    });
+
 
             $recentReactors = $blog->reactions->take(5)->map(function ($reaction) {
                 $user = $reaction->user;
@@ -67,6 +83,24 @@ class PageController extends Controller
                     $comment->replies = $comment->replies;
                     return $comment;
                 });
+
+                $blog->user_reaction = auth()->check()
+                ? optional($blog->reactions->firstWhere('user_id', auth()->id()))->type
+                : null;
+
+            $blog->user_reactions = $blog->reactions
+                ->sortByDesc('created_at')
+                ->take(10) // Limit to latest 10 reactors
+                ->map(function ($reaction) {
+                    return [
+                        'user_id' => $reaction->user_id,
+                        'user_name' => $reaction->user->name,
+                        'avatar' => $reaction->user->profile_photo_url,
+                        'reaction' => $reaction->type,
+                        'created_at' => $reaction->created_at->toDateTimeString(),
+                    ];
+                })
+                ->values();
 
             return $blog;
         });
