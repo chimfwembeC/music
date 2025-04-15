@@ -1,19 +1,44 @@
-import React, { useState } from 'react';
-import { Cpu, Heart, List, MessageCircleMore, Music, User } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import {
+  Cpu,
+  Heart,
+  List,
+  MessageCircle,
+  MessageCircleMore,
+  Music,
+  Pencil,
+  Save,
+  Trash2,
+  User,
+  X,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Link } from '@inertiajs/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ReactionButton from '@/Components/ReactionButton';
 import useTypedPage from '@/Hooks/useTypedPage';
 import CommentSection from '@/Components/CommentSection'; // Import the CommentSection
-import { Music as MusicData } from '@/types';
+import { Music as MusicData, User as user } from '@/types';
+import BlogSkeleton from './BlogSkeleton';
+import SectionBorder from '@/Components/SectionBorder';
+import { CommentItem } from '@/Components/CommentItem';
+import moment from 'moment';
 
 // Types
 interface UserReaction {
   user_name: string;
   avatar: string;
   reaction: string; // like "😂" or "❤️"
+}
+
+interface Comment {
+  id: number;
+  blog_id: string;
+  content: string;
+  user_id: string;
+  user: user;
+  created_at: string;
 }
 
 interface Blog {
@@ -26,8 +51,8 @@ interface Blog {
   reaction_counts: Record<string, number>;
   user_reaction: string | null;
   comments_count: number;
+  comments: Comment;
 }
-
 
 interface BlogsPageProps {
   blogs: Blog[];
@@ -53,78 +78,7 @@ const musicData: MusicData[] = [
     created_at: '2024-03-15',
     updated_at: '2024-03-15',
   },
-  {
-    id: 2,
-    title: 'Midnight Drive',
-    slug: 'midnight-drive',
-    artist_id: 2,
-    genre_id: 2,
-    album_id: 2,
-    duration: 198,
-    file_url: 'https://example.com/music2.mp3',
-    original_filename: 'midnight_drive.mp3',
-    image_url:
-      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80',
-    download_counts: 950,
-    is_published: true,
-    is_featured: true,
-    created_at: '2024-03-14',
-    updated_at: '2024-03-14',
-  },
-  {
-    id: 3,
-    title: 'Urban Dreams',
-    slug: 'urban-dreams',
-    artist_id: 3,
-    genre_id: 3,
-    album_id: 2,
-    duration: 256,
-    file_url: 'https://example.com/music3.mp3',
-    original_filename: 'urban_dreams.mp3',
-    image_url:
-      'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&h=800',
-    download_counts: 1100,
-    is_published: true,
-    is_featured: true,
-    created_at: '2024-03-13',
-    updated_at: '2024-03-13',
-  },
-  {
-    id: 4,
-    title: 'Ocean Waves',
-    slug: 'ocean-waves',
-    artist_id: 4,
-    genre_id: 4,
-    album_id: 3,
-    duration: 345,
-    file_url: 'https://example.com/music4.mp3',
-    original_filename: 'ocean_waves.mp3',
-    image_url:
-      'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&q=80&h=600',
-    download_counts: 850,
-    is_published: true,
-    is_featured: false,
-    created_at: '2024-03-12',
-    updated_at: '2024-03-12',
-  },
-  {
-    id: 5,
-    title: 'City Nights',
-    slug: 'city-nights',
-    artist_id: 5,
-    genre_id: 5,
-    album_id: 3,
-    duration: 289,
-    file_url: 'https://example.com/music5.mp3',
-    original_filename: 'city_nights.mp3',
-    image_url:
-      'https://images.unsplash.com/photo-1513829596324-4bb2800c5efb?auto=format&fit=crop&q=80&h=900',
-    download_counts: 1400,
-    is_published: true,
-    is_featured: true,
-    created_at: '2024-03-11',
-    updated_at: '2024-03-11',
-  },
+  // ... other music data
 ];
 
 const inlineAds = [
@@ -170,6 +124,30 @@ const inlineAds = [
   },
 ];
 
+const sidebarAds = [
+  {
+    id: 101,
+    color: 'bg-red-100 dark:bg-red-700',
+    text: '🎮 Try the #1 gaming platform of 2025!',
+    link: 'https://example.com/gaming',
+    linkText: 'Play Now',
+  },
+  {
+    id: 102,
+    color: 'bg-yellow-100 dark:bg-yellow-700',
+    text: '👜 Explore next-gen fashion accessories',
+    link: 'https://example.com/fashion',
+    linkText: 'See Styles',
+  },
+  {
+    id: 103,
+    color: 'bg-purple-100 dark:bg-purple-700',
+    text: '📚 Learn coding interactively — free trial!',
+    link: 'https://example.com/learn-to-code',
+    linkText: 'Enroll Today',
+  },
+];
+
 const emojiMap: Record<string, string> = {
   like: '👍',
   love: '❤️',
@@ -179,7 +157,6 @@ const emojiMap: Record<string, string> = {
   angry: '😡',
 };
 
-
 const BlogsPage: React.FC<BlogsPageProps> = ({
   blogs,
   total,
@@ -187,7 +164,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
 }) => {
   const [filters, setFilters] = useState({
     search: '',
-    category: '', // You can add a category filter here
+    category: '',
   });
   const [latestComment, setLatestComment] = useState<any | null>(null);
   const [displayedBlogs, setDisplayedBlogs] = useState<Blog[]>(blogs);
@@ -199,12 +176,39 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
     damping: 30,
   };
 
+  // console.log('blogs', displayedBlogs);
   const age = 18;
   const isUserAdult = age >= 18;
   const filteredAds = inlineAds.filter(ad => {
-    if (ad.id === 3 && !isUserAdult) return false; // 🔞 block adult ad
+    if (ad.id === 3 && !isUserAdult) return false;
     return true;
   });
+
+  // Get removed ad IDs from sessionStorage
+  const [removedAdIds, setRemovedAdIds] = useState<number[]>(() => {
+    const saved = sessionStorage.getItem('removedAds');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Remove an ad and update sessionStorage
+  const handleRemoveAd = (adId: number) => {
+    const updated = [...removedAdIds, adId];
+    setRemovedAdIds(updated);
+    sessionStorage.setItem('removedAds', JSON.stringify(updated));
+  };
+
+  // Generate random ad positions on mount or when blogs change
+  const [adPositions, setAdPositions] = useState<number[]>([]);
+  useEffect(() => {
+    const positions: number[] = [];
+    displayedBlogs.forEach((_, index) => {
+      // 20% chance to inject an ad after this blog
+      if (Math.random() < 0.2) {
+        positions.push(index);
+      }
+    });
+    setAdPositions(positions);
+  }, [displayedBlogs]);
 
   const categoryIcons: Record<string, JSX.Element> = {
     All: <List className="w-4 h-4 mr-1" />,
@@ -212,9 +216,9 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
     Music: <Music className="w-4 h-4 mr-1" />,
     Lifestyle: <Heart className="w-4 h-4 mr-1" />,
   };
-  // Simulate an API call to get more blogs
-  const [pageNumber, setPageNumber] = useState(2); // start at 2 for infinite scroll
 
+  // Simulate an API call to get more blogs
+  const [pageNumber, setPageNumber] = useState(2);
   const fetchMoreBlogs = async () => {
     const res = await fetch(
       `/get_blogs?search=${filters.search}&page=${pageNumber}`,
@@ -236,22 +240,21 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
 
   const [comments, setComments] = useState<any[]>([]);
   const [activeBlogId, setActiveBlogId] = useState<number | null>(null);
-
   const openCommentSheet = (id: number) => setActiveBlogId(id);
   const closeCommentSheet = () => setActiveBlogId(null);
 
-  // Handle drag end on the sheet - if dragged down more than threshold, close it
-  const handleDragEnd = (event: MouseEvent | TouchEvent, info: PanInfo) => {
+  const handleDragEnd = (event: MouseEvent | TouchEvent, info: any) => {
     if (info.offset.y > 100) {
       closeCommentSheet();
     }
   };
 
-  // Top 3 trending music by download_counts
   const trendingMusic = [...music]
     .filter(m => m.is_published)
     .sort((a, b) => b.download_counts - a.download_counts)
     .slice(0, 3);
+
+  // console.log('blogs', displayedBlogs?.comments?.[0].user.name);
   return (
     <GuestLayout title="Blogs">
       <div className="min-h-screen bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 from-gray-200 to-gray-100 dark:text-white text-gray-600">
@@ -263,7 +266,6 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
             {['All', 'Tech', 'Music', 'Lifestyle'].map(category => {
               const isActive =
                 filters.category === (category === 'All' ? '' : category);
-
               return (
                 <motion.button
                   key={category}
@@ -275,11 +277,10 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
                   }
                   whileTap={{ scale: 0.95 }}
                   transition={spring}
-                  className="relative overflow-hidden px-4 py-2 rounded-full text-sm font-medium border 
-          flex items-center z-10"
+                  className="relative overflow-hidden px-4 py-2 rounded-full text-sm font-medium border flex items-center z-10"
                   style={{
                     borderColor: isActive
-                      ? 'rgb(59, 130, 246)' // blue-500
+                      ? 'rgb(59, 130, 246)'
                       : 'var(--tw-border-opacity)',
                     color: isActive ? 'white' : '',
                   }}
@@ -305,10 +306,8 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-5 max-w-5xl m-auto gap-8">
-            {/* Infinite Scroll */}
-
             {/* first col span */}
-            <div className="col-span-1 hidden lg:block">
+            <div className="col-span-1 hidden lg:block space-y-4 p-4 sticky top-24 self-start">
               <div className="">
                 <div className="text-xl font-bold text-gray-800 dark:text-purple-500 mb-2">
                   Download App
@@ -329,7 +328,6 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
                 <h2 className="text-xl font-bold text-gray-800 dark:text-purple-500 mb-2">
                   Trending Music
                 </h2>
-
                 <div className="bg-gray-400/50 dark:bg-purple-800 p-4 border-b-4 border-gray-400/50 dark:border-purple-500 space-y-2">
                   {trendingMusic.map(track => (
                     <div
@@ -341,6 +339,7 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
                   ))}
                 </div>
               </div>
+
               <div className="bg-yellow-200 dark:bg-yellow-500/20 p-4 rounded-lg text-center font-semibold text-sm text-gray-800 dark:text-yellow-200 shadow mb-6">
                 📢 Sponsored: Check out the hottest gadgets of 2025!
                 <a
@@ -359,18 +358,20 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
                 next={fetchMoreBlogs}
                 hasMore={displayedBlogs.length < total}
                 loader={
-                  <p className="text-center text-gray-400">
-                    Loading more blogs...
-                  </p>
+                  <div>
+                    {[...Array(3)].map((_, i) => (
+                      <BlogSkeleton key={i} />
+                    ))}
+                  </div>
                 }
               >
                 {displayedBlogs.length ? (
-                  <div className="grid gap-6 md:grid-cols-1">
+                  <div className="">
                     {displayedBlogs.map((blog, index) => (
                       <React.Fragment key={blog.id}>
                         <motion.div
                           key={blog.id}
-                          className="bg-gray-100 dark:bg-gray-800 border border-gray-400/50 dark:border-gray-600 rounded-lg transition-all duration-300"
+                          className="bg-gray-100 dark:bg-gray-800 border border-gray-400/50 dark:border-purple-800 rounded-lg transition-all duration-300 my-6"
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.5 }}
@@ -387,73 +388,110 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
                             <p className="text-gray-400">
                               {blog.content.slice(0, 100)}...
                             </p>
-
                             <div className="flex justify-between items-center gap-1 mt-4">
-                            <div className="flex items-center">
-                            <ReactionButton
-                                blogId={blog.id}
-                                initialCounts={blog.reaction_counts}
-                                initialReaction={blog.user_reaction}
-                              />
-                              <button
-                                onClick={() => openCommentSheet(blog.id)}
-                                className="text-sm text-blue-500 hover:text-blue-400"
-                              >
-                                <MessageCircleMore className="w-5 h-5 inline-block mr-1" />
-                                {blog.comments_count}
-                              </button>
+                              <div className="flex items-center">
+                                <ReactionButton
+                                  blogId={blog.id}
+                                  initialCounts={blog.reaction_counts}
+                                  initialReaction={blog.user_reaction}
+                                />
+                                <button
+                                  onClick={() => openCommentSheet(blog.id)}
+                                  className="text-sm text-blue-500 hover:text-blue-400"
+                                >
+                                  <MessageCircleMore className="w-5 h-5 inline-block mr-1" />
+                                  {blog.comments_count}
+                                </button>
+                              </div>
+
+                              <div className="flex items-center -space-x-4">
+                                {blog.user_reactions.map((reaction, index) => (
+                                  <motion.div
+                                    key={index}
+                                    className="relative group"
+                                    whileHover={{ scale: 1.1 }}
+                                    transition={{
+                                      type: 'spring',
+                                      stiffness: 300,
+                                      damping: 20,
+                                    }}
+                                  >
+                                    <img
+                                      src={reaction?.avatar}
+                                      alt={reaction?.user_name}
+                                      className="w-8 h-8 rounded-full border-2 border-white shadow-lg"
+                                    />
+                                    {/* Emoji Badge */}
+                                    <div className="absolute -bottom-1.5 -left-1.5 z-10 bg-white rounded-full w-5 h-5 flex items-center justify-center shadow-md text-sm">
+                                      {emojiMap[reaction?.reaction] ||
+                                        reaction?.reaction}
+                                    </div>
+                                    {/* Tooltip */}
+                                    <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20 whitespace-nowrap">
+                                      {reaction?.user_name} reacted with{' '}
+                                      {reaction?.reaction}
+                                    </div>
+                                  </motion.div>
+                                ))}
+                              </div>
                             </div>
-
-                            <div className="flex items-center -space-x-4">
-  {blog.user_reactions.map((reaction, index) => (
-    <motion.div
-      key={index}
-      className="relative group"
-      whileHover={{ scale: 1.1 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-    >
-      <img
-        src={reaction?.avatar}
-        alt={reaction?.user_name}
-        className="w-8 h-8 rounded-full border-2 border-white shadow-lg"
-      />
-
-      {/* Emoji Badge */}
-      <div className="absolute -bottom-1.5 -right-1.5 bg-white rounded-full w-5 h-5 flex items-center justify-center shadow-md text-sm">
-  {emojiMap[reaction?.reaction] || reaction?.reaction}
-</div>
-
-
-      {/* Tooltip */}
-      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-20 whitespace-nowrap">
-        {reaction?.user_name} reacted with {reaction?.reaction}
-      </div>
-    </motion.div>
-  ))}
-</div>
-
-                            </div>
-
+                            {blog?.comments?.[0] && (
+                              <>
+                                <div className="border border-gray-400/50 dark:border-purple-800 -mx-4 my-4" />
+                                <div className="text-sm font-bold mb-2">
+                                  Latest Comments
+                                </div>
+                                <div className="bg-gray-400 dark:bg-gray-700 rounded p-4">
+                                  <div>
+                                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                      {blog?.comments?.[0]?.user.name}
+                                      <span className="ml-2 text-xs text-gray-400">
+                                        {moment(
+                                          blog?.comments?.[0]?.created_at,
+                                        ).fromNow()}
+                                      </span>
+                                    </p>
+                                    <p className="mt-1 text-gray-800 dark:text-gray-200 text-sm">
+                                      {blog.comments?.[0]?.content}
+                                    </p>
+                                  </div>
+                                </div>
+                              </>
+                            )}
                           </div>
                         </motion.div>
-                        {/* Insert ad every 4 blogs */}
-                        {index > 0 &&
-                          index % 2 === 0 &&
+
+                        {/* Determine if an ad should be inserted at this index */}
+                        {adPositions.includes(index) &&
                           (() => {
                             const ad =
-                              filteredAds[(index / 2) % inlineAds.length];
+                              filteredAds[
+                                Math.floor(index / 4) % filteredAds.length
+                              ];
+                            if (removedAdIds.includes(ad.id)) return null;
                             return (
                               <div
-                                className={`${ad.bgColor} p-4 flex justify-center items-center text-center rounded-lg shadow h-48`}
+                                className={`${ad.bgColor} relative rounded-lg shadow my-6`}
                               >
-                                <div className="p-4">
-                                  {ad.text}
-                                  <a
-                                    href={ad.link}
-                                    className={`${ad.textColor} underline block mt-2`}
+                                <div className="absolute top-2 right-2">
+                                  <button
+                                    onClick={() => handleRemoveAd(ad.id)}
+                                    className="bg-gray-400 hover:bg-gray-600 transition-all duration-300 h-8 w-8 flex justify-center items-center rounded"
+                                    type="button"
                                   >
-                                    {ad.linkText}
-                                  </a>
+                                    <X className="w-6 h-6 text-gray-200" />
+                                  </button>
+                                </div>
+                                <div className="p-4 flex justify-center items-center text-center h-64">
+                                  <div className="p-4">
+                                    {ad.text}
+                                    <a
+                                      href={ad.link}
+                                      className={`${ad.textColor} underline block mt-2`}
+                                    >
+                                      {ad.linkText}
+                                    </a>
+                                  </div>
                                 </div>
                               </div>
                             );
@@ -471,40 +509,30 @@ const BlogsPage: React.FC<BlogsPageProps> = ({
             </div>
 
             {/* third col span - Ad section */}
-            <div className="col-span-1 space-y-4  hidden lg:block">
-              {[
-                {
-                  color: 'bg-red-100 dark:bg-red-700',
-                  text: '🎮 Try the #1 gaming platform of 2025!',
-                  link: 'https://example.com/gaming',
-                  linkText: 'Play Now',
-                },
-                {
-                  color: 'bg-yellow-100 dark:bg-yellow-700',
-                  text: '👜 Explore next-gen fashion accessories',
-                  link: 'https://example.com/fashion',
-                  linkText: 'See Styles',
-                },
-                {
-                  color: 'bg-purple-100 dark:bg-purple-700',
-                  text: '📚 Learn coding interactively — free trial!',
-                  link: 'https://example.com/learn-to-code',
-                  linkText: 'Enroll Today',
-                },
-              ].map((ad, idx) => (
-                <div
-                  key={idx}
-                  className={`${ad.color} p-4 rounded-lg shadow text-center`}
-                >
-                  {ad.text}
-                  <a
-                    href={ad.link}
-                    className="block mt-2 underline text-sm dark:text-white"
+            <div className="col-span-1 space-y-4 hidden lg:block">
+              {sidebarAds.map(ad => {
+                if (removedAdIds.includes(ad.id)) return null;
+                return (
+                  <div
+                    key={ad.id}
+                    className={`${ad.color} p-4 rounded-lg shadow text-center relative`}
                   >
-                    {ad.linkText}
-                  </a>
-                </div>
-              ))}
+                    <button
+                      onClick={() => handleRemoveAd(ad.id)}
+                      className="absolute top-2 right-2 bg-gray-400 hover:bg-gray-600 h-6 w-6 rounded flex items-center justify-center"
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                    {ad.text}
+                    <a
+                      href={ad.link}
+                      className="block mt-2 underline text-sm dark:text-white"
+                    >
+                      {ad.linkText}
+                    </a>
+                  </div>
+                );
+              })}
             </div>
           </div>
           {/* Render Comment Section */}
