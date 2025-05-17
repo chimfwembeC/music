@@ -12,6 +12,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Team } from '@/types';
 import DarkModeToggle from '@/Components/DarkModeToggle';
+import AfricanThemeToggle from '@/Components/AfricanThemeToggle';
 
 interface Props {
   title: string;
@@ -115,9 +116,10 @@ export default function AppLayout({
               </div>
 
               <div className="hidden sm:flex sm:items-center sm:ml-6">
-                <div className="hidden sm:block">
-                  {/* Your DarkModeToggle component */}
+                <div className="hidden sm:flex items-center space-x-3">
+                  {/* Theme toggles */}
                   <DarkModeToggle />
+                  <AfricanThemeToggle />
                 </div>
                 {/* <!-- Settings Dropdown --> */}
                 <div className="ml-3 relative border border-gray-400 dark:border-purple-800 rounded-lg p-[3px] ">

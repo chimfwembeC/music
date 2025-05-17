@@ -29,6 +29,11 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    // African Theme Demo Page
+    Route::get('/african-theme-demo', function () {
+        return Inertia::render('AfricanThemeDemo');
+    })->name('african-theme-demo');
 });
 
 // Resource routes for ArtistController
@@ -80,7 +85,7 @@ Route::post('/blogs/{id}/react', [\App\Http\Controllers\ReactionController::clas
 Route::middleware('auth:sanctum')->group(function () {
     // Create comment or reply
     Route::post('/blogs/{blog}/comments', [CommentController::class, 'store']);
-    
+
     // Edit or delete a comment or reply
     Route::put('/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);

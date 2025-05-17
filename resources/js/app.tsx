@@ -7,6 +7,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { RouteContext } from '@/Hooks/useRoute';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { DarkModeProvider } from "@/Context/DarkModeContext";
+import { AfricanThemeProvider } from "@/Context/AfricanThemeContext";
 
 const appName =
     window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
@@ -26,7 +27,9 @@ createInertiaApp({
         return root.render(
             <RouteContext.Provider value={(window as any).route}>
                 <DarkModeProvider>
-                    <App {...props} />
+                    <AfricanThemeProvider>
+                        <App {...props} />
+                    </AfricanThemeProvider>
                 </DarkModeProvider>
             </RouteContext.Provider>,
         );
