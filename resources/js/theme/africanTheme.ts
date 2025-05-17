@@ -204,6 +204,75 @@ export const colors = {
       950: '#451A03',
     },
   },
+
+  // Colors inspired by South African Ndebele art and architecture
+  ndebele: {
+    black: {
+      50: '#f7f7f7',
+      100: '#e3e3e3',
+      200: '#c8c8c8',
+      300: '#a4a4a4',
+      400: '#818181',
+      500: '#666666',
+      600: '#515151',
+      700: '#434343',
+      800: '#383838',
+      900: '#1f1f1f', // Primary black
+      950: '#000000',
+    },
+    red: {
+      50: '#FFF5F5',
+      100: '#FFE3E3',
+      200: '#FFC9C9',
+      300: '#FFA8A8',
+      400: '#FF8787',
+      500: '#FF6B6B',
+      600: '#FA5252', // Primary red
+      700: '#F03E3E',
+      800: '#E03131',
+      900: '#C92A2A',
+      950: '#7D0A0A',
+    },
+    yellow: {
+      50: '#FFFDE7',
+      100: '#FFF9C4',
+      200: '#FFF59D',
+      300: '#FFF176',
+      400: '#FFEE58',
+      500: '#FFEB3B', // Primary yellow
+      600: '#FDD835',
+      700: '#FBC02D',
+      800: '#F9A825',
+      900: '#F57F17',
+      950: '#8D4E00',
+    },
+    blue: {
+      50: '#E3F2FD',
+      100: '#BBDEFB',
+      200: '#90CAF9',
+      300: '#64B5F6',
+      400: '#42A5F5',
+      500: '#2196F3', // Primary blue
+      600: '#1E88E5',
+      700: '#1976D2',
+      800: '#1565C0',
+      900: '#0D47A1',
+      950: '#052C65',
+    },
+    green: {
+      50: '#E8F5E9',
+      100: '#C8E6C9',
+      200: '#A5D6A7',
+      300: '#81C784',
+      400: '#66BB6A',
+      500: '#4CAF50', // Primary green
+      600: '#43A047',
+      700: '#388E3C',
+      800: '#2E7D32',
+      900: '#1B5E20',
+      950: '#0A3D0A',
+    },
+  },
 };
 
 // Typography scale inspired by traditional African proportions

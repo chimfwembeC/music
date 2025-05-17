@@ -75,6 +75,33 @@ export default function AppLayout({
                     Dashboard
                   </NavLink>
 
+                  {page.props.auth.user?.role === 'listener' && (
+                    <NavLink
+                      href={route('listener.dashboard')}
+                      active={route().current('listener.dashboard')}
+                    >
+                      My Music
+                    </NavLink>
+                  )}
+
+                  {page.props.auth.user?.role === 'artist' && (
+                    <NavLink
+                      href={route('artist.dashboard')}
+                      active={route().current('artist.dashboard')}
+                    >
+                      Artist Dashboard
+                    </NavLink>
+                  )}
+
+                  {page.props.auth.user?.role === 'admin' && (
+                    <NavLink
+                      href={route('admin.dashboard')}
+                      active={route().current('admin.dashboard')}
+                    >
+                      Admin Dashboard
+                    </NavLink>
+                  )}
+
                   <NavLink
                     href={route('tracks.index')}
                     active={route().current('tracks*')}
@@ -111,6 +138,20 @@ export default function AppLayout({
                     active={route().current('blogs*')}
                   >
                     Blogs
+                  </NavLink>
+
+                  <NavLink
+                    href={route('african-theme-demo')}
+                    active={route().current('african-theme-demo')}
+                  >
+                    African Theme
+                  </NavLink>
+
+                  <NavLink
+                    href={route('pattern-customizer')}
+                    active={route().current('pattern-customizer')}
+                  >
+                    Pattern Customizer
                   </NavLink>
                 </div>
               </div>
@@ -240,6 +281,33 @@ export default function AppLayout({
                 Dashboard
               </ResponsiveNavLink>
 
+              {page.props.auth.user?.role === 'listener' && (
+                <ResponsiveNavLink
+                  href={route('listener.dashboard')}
+                  active={route().current('listener.dashboard')}
+                >
+                  My Music
+                </ResponsiveNavLink>
+              )}
+
+              {page.props.auth.user?.role === 'artist' && (
+                <ResponsiveNavLink
+                  href={route('artist.dashboard')}
+                  active={route().current('artist.dashboard')}
+                >
+                  Artist Dashboard
+                </ResponsiveNavLink>
+              )}
+
+              {page.props.auth.user?.role === 'admin' && (
+                <ResponsiveNavLink
+                  href={route('admin.dashboard')}
+                  active={route().current('admin.dashboard')}
+                >
+                  Admin Dashboard
+                </ResponsiveNavLink>
+              )}
+
               <ResponsiveNavLink
                 href={route('tracks.index')}
                 active={route().current('tracks*')}
@@ -271,6 +339,20 @@ export default function AppLayout({
                   </ResponsiveNavLink>
                 </>
               ) : null}
+
+              <ResponsiveNavLink
+                href={route('african-theme-demo')}
+                active={route().current('african-theme-demo')}
+              >
+                African Theme
+              </ResponsiveNavLink>
+
+              <ResponsiveNavLink
+                href={route('pattern-customizer')}
+                active={route().current('pattern-customizer')}
+              >
+                Pattern Customizer
+              </ResponsiveNavLink>
             </div>
 
             {/* <!-- Responsive Settings Options --> */}

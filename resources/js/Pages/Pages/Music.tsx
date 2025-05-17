@@ -242,18 +242,15 @@ function Music({ musics }: MusicPageProps) {
                             {displayedMusic.map((music) => (
                                 <motion.div
                                     key={music.id}
-                                    className="border border-gray-400 dark:border-gray-600 bg-gray-400/50 dark:bg-gray-800 rounded-lg overflow-hidden hover:bg-gray-300 dark:hover:bg-gray-700/50 transition-all duration-300 backdrop-blur-sm"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
+                                    className="border-b border-gray-400 dark:border-gray-600 overflow-hidden transition-all duration-300 backdrop-blur-sm"
                                     transition={{ duration: 0.5 }}
-                                    whileHover={{ scale: 1.01 }}
                                 >
                                     <div className="flex items-center p-4">
-                                        <div className="relative group w-12 h-12 flex-shrink-0">
+                                        <div className="relative group w-16 h-16 flex-shrink-0">
                                             <img
                                                 src={`storage/${music.image_url}`}
                                                 alt={music.title}
-                                                className="w-12 h-12 object-cover rounded-md bg-gray-400 dark:bg-gray-600 border border-gray-300 dark:border-gray-500"
+                                                className="w-16 h-16 object-cover rounded bg-gray-400 dark:bg-gray-600 border border-gray-300 dark:border-gray-500"
                                             />
                                             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-all duration-300 rounded-md opacity-0 group-hover:opacity-100 flex items-center justify-center">
                                                 <Play className="w-8 h-8 text-white cursor-pointer" />

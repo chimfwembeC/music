@@ -30,6 +30,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'bio',
+        'phone',
+        'location',
+        'social_links',
     ];
 
     /**
@@ -63,6 +67,79 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'social_links' => 'array',
         ];
+    }
+
+    /**
+     * Get the playlists that belong to the user.
+     */
+    public function playlists()
+    {
+        return $this->hasMany(Playlist::class);
+    }
+
+    /**
+     * Get the favorites that belong to the user.
+     */
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    /**
+     * Get the activities that belong to the user.
+     */
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
+    }
+
+    /**
+     * Get the user's favorite music.
+     */
+    public function favoriteTracks()
+    {
+        return $this->favorites()->where('favorable_type', Music::class);
+    }
+
+    /**
+     * Get the user's favorite albums.
+     */
+    public function favoriteAlbums()
+    {
+        return $this->favorites()->where('favorable_type', Album::class);
+    }
+
+    /**
+     * Get the user's favorite artists.
+     */
+    public function favoriteArtists()
+    {
+        return $this->favorites()->where('favorable_type', Artist::class);
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if the user is an artist.
+     */
+    public function isArtist(): bool
+    {
+        return $this->role === 'artist';
+    }
+
+    /**
+     * Get the artist profile associated with the user.
+     */
+    public function artist()
+    {
+        return $this->hasOne(Artist::class);
     }
 }

@@ -38,6 +38,13 @@ export default {
           magenta: colors.chitenge.magenta,
           ochre: colors.chitenge.ochre,
         },
+        ndebele: {
+          black: colors.ndebele.black,
+          red: colors.ndebele.red,
+          yellow: colors.ndebele.yellow,
+          blue: colors.ndebele.blue,
+          green: colors.ndebele.green,
+        },
         // Override primary colors with African-inspired ones
         primary: colors.kente.gold,
         secondary: colors.ankara.purple,

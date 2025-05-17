@@ -39,4 +39,28 @@ class Genre extends Model
 
         return $slug;
     }
+
+    /**
+     * Get the music tracks that belong to this genre.
+     */
+    public function tracks()
+    {
+        return $this->hasMany(Music::class);
+    }
+
+    /**
+     * Get the music tracks that belong to this genre (alias for tracks).
+     */
+    public function music()
+    {
+        return $this->hasMany(Music::class);
+    }
+
+    /**
+     * Get the albums that belong to this genre.
+     */
+    public function albums()
+    {
+        return $this->hasMany(Album::class);
+    }
 }

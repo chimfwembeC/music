@@ -7,7 +7,9 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\MusicController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,14 +28,37 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    // Main dashboard route - handles all roles
+    Route::get('/dashboard', App\Http\Controllers\DashboardController::class)->name('dashboard');
+
+    // Role-specific dashboard routes - all handled by the same controller
+    Route::get('/listener-dashboard', App\Http\Controllers\DashboardController::class)
+        ->name('listener.dashboard')
+        ->middleware('role:listener');
+
+    Route::get('/artist-dashboard', App\Http\Controllers\DashboardController::class)
+        ->name('artist.dashboard')
+        ->middleware('role:artist');
+
+    Route::get('/admin-dashboard', App\Http\Controllers\DashboardController::class)
+        ->name('admin.dashboard')
+        ->middleware('role:admin');
+
 
     // African Theme Demo Page
     Route::get('/african-theme-demo', function () {
         return Inertia::render('AfricanThemeDemo');
     })->name('african-theme-demo');
+
+    // Pattern Customizer Demo Page
+    Route::get('/pattern-customizer-demo', function () {
+        return Inertia::render('PatternCustomizerDemo');
+    })->name('pattern-customizer-demo');
+
+    // Advanced Pattern Customizer Page
+    Route::get('/pattern-customizer', function () {
+        return Inertia::render('PatternCustomizer');
+    })->name('pattern-customizer');
 });
 
 // Resource routes for ArtistController
@@ -56,6 +81,15 @@ Route::resource('tracks', MusicController::class);
 Route::patch('/tracks/{id}/toggle-publish', [MusicController::class, 'togglePublish'])->name('tracks.toggle-publish');
 Route::patch('/tracks/{id}/toggle-featured', [MusicController::class, 'toggleFeatured'])->name('tracks.toggle-featured');
 
+// Resource routes for PlaylistController
+Route::resource('playlists', PlaylistController::class);
+Route::patch('/playlists/{id}/toggle-public', [PlaylistController::class, 'togglePublic'])->name('playlists.toggle-public');
+
+// Resource routes for UserController (admin only)
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    Route::resource('users', UserController::class);
+    Route::patch('/users/{id}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
+});
 
 
 Route::get('/music', [PageController::class, 'music'])->name('music');

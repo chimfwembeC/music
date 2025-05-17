@@ -46,11 +46,18 @@ class ArtistController extends Controller
         $image_url = $request->hasFile('image_url') ? $request->file('image_url')->store('artist_images','public') : null;
 
         // Create a new artist
-        Artist::create([
+        $artist = Artist::create([
             'name' => $validated['name'],
             'bio' => $validated['bio'],
             'image_url' => $image_url,
+            'user_id' => auth()->id(), // Associate with the current user
         ]);
+
+        // If the user is not an artist, update their role
+        $user = auth()->user();
+        if ($user && $user->role !== 'artist') {
+            $user->update(['role' => 'artist']);
+        }
 
         return redirect()->route('artists.index')->with('success', 'Artist created successfully.');
     }

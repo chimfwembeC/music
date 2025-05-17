@@ -35,14 +35,29 @@ export default function AfricanThemeDemo() {
               <p className="text-lg text-gray-700 dark:text-gray-300 mb-6 font-body">
                 This design system incorporates colors, patterns, and typography inspired by
                 traditional African art, textiles, and cultural elements. The system includes
-                four main themes: <span className="font-semibold">Earth</span> (inspired by Sahel region),
+                five main themes: <span className="font-semibold">Earth</span> (inspired by Sahel region),
                 <span className="font-semibold"> Kente</span> (inspired by West African textiles),
                 <span className="font-semibold"> Ankara</span> (inspired by vibrant African prints),
-                and <span className="font-semibold"> Chitenge</span> (inspired by East African textiles).
+                <span className="font-semibold"> Chitenge</span> (inspired by East African textiles),
+                and <span className="font-semibold"> Ndebele</span> (inspired by South African geometric art).
               </p>
               <div className="flex flex-wrap gap-3">
                 <AfricanButton size="lg">Current Theme: {themeVariant}</AfricanButton>
                 <AfricanButton size="lg" variant="secondary">Current Pattern: {patternType}</AfricanButton>
+                <AfricanButton
+                  size="lg"
+                  variant="accent"
+                  onClick={() => window.location.href = '/pattern-customizer'}
+                >
+                  Try Advanced Pattern Customizer
+                </AfricanButton>
+                <AfricanButton
+                  size="lg"
+                  variant="outline"
+                  onClick={() => window.location.href = '/pattern-customizer-demo'}
+                >
+                  Simple Pattern Customizer
+                </AfricanButton>
               </div>
             </div>
           </PatternBackground>
@@ -69,6 +84,9 @@ export default function AfricanThemeDemo() {
                   <div className="h-12 rounded-md bg-chitenge-indigo-500 dark:bg-chitenge-indigo-400 flex items-center px-4 text-white">
                     Chitenge: Indigo
                   </div>
+                  <div className="h-12 rounded-md bg-ndebele-red-600 dark:bg-ndebele-red-500 flex items-center px-4 text-white">
+                    Ndebele: Red
+                  </div>
                 </div>
               </div>
 
@@ -87,6 +105,9 @@ export default function AfricanThemeDemo() {
                   <div className="h-12 rounded-md bg-chitenge-turquoise-500 dark:bg-chitenge-turquoise-400 flex items-center px-4 text-white">
                     Chitenge: Turquoise
                   </div>
+                  <div className="h-12 rounded-md bg-ndebele-blue-500 dark:bg-ndebele-blue-400 flex items-center px-4 text-white">
+                    Ndebele: Blue
+                  </div>
                 </div>
               </div>
 
@@ -104,6 +125,9 @@ export default function AfricanThemeDemo() {
                   </div>
                   <div className="h-12 rounded-md bg-chitenge-magenta-500 dark:bg-chitenge-magenta-400 flex items-center px-4 text-white">
                     Chitenge: Magenta
+                  </div>
+                  <div className="h-12 rounded-md bg-ndebele-yellow-500 dark:bg-ndebele-yellow-400 flex items-center px-4 text-gray-900">
+                    Ndebele: Yellow
                   </div>
                 </div>
               </div>
@@ -144,6 +168,47 @@ export default function AfricanThemeDemo() {
                   <div className="relative h-24 rounded-md bg-white dark:bg-gray-700 overflow-hidden border border-gray-200 dark:border-gray-600 flex items-center justify-center">
                     <AfricanBackground pattern="chitenge-spiral" primaryColor="#6366F1" secondaryColor="#EC4899" opacity={0.2} />
                     <span className="relative z-10 font-medium text-sm">Spiral</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AfricanCard>
+
+          {/* Ndebele Patterns Section */}
+          <AfricanCard className="p-8 mb-8" variant="primary" withPattern patternType="ndebele-geometric" bordered>
+            <h2 className="text-2xl font-display font-bold mb-6 text-gray-900 dark:text-white">
+              Ndebele Patterns
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-3">About Ndebele Art</h3>
+                <p className="text-gray-700 dark:text-gray-300 mb-4">
+                  Ndebele art originates from the Ndebele people of South Africa and is known for its bold,
+                  geometric patterns and vibrant colors. Traditionally painted on houses, these designs feature
+                  symmetrical shapes, straight lines, and distinctive color combinations that have become iconic
+                  in African visual culture.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Pattern Styles</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="relative h-24 rounded-md bg-white dark:bg-gray-700 overflow-hidden border border-gray-200 dark:border-gray-600 flex items-center justify-center">
+                    <AfricanBackground pattern="ndebele-geometric" primaryColor="#FA5252" secondaryColor="#2196F3" opacity={0.2} />
+                    <span className="relative z-10 font-medium text-sm">Geometric</span>
+                  </div>
+                  <div className="relative h-24 rounded-md bg-white dark:bg-gray-700 overflow-hidden border border-gray-200 dark:border-gray-600 flex items-center justify-center">
+                    <AfricanBackground pattern="ndebele-zigzag" primaryColor="#FA5252" secondaryColor="#2196F3" opacity={0.2} />
+                    <span className="relative z-10 font-medium text-sm">Zigzag</span>
+                  </div>
+                  <div className="relative h-24 rounded-md bg-white dark:bg-gray-700 overflow-hidden border border-gray-200 dark:border-gray-600 flex items-center justify-center">
+                    <AfricanBackground pattern="ndebele-triangular" primaryColor="#FA5252" secondaryColor="#2196F3" opacity={0.2} />
+                    <span className="relative z-10 font-medium text-sm">Triangular</span>
+                  </div>
+                  <div className="relative h-24 rounded-md bg-white dark:bg-gray-700 overflow-hidden border border-gray-200 dark:border-gray-600 flex items-center justify-center">
+                    <AfricanBackground pattern="ndebele-step" primaryColor="#FA5252" secondaryColor="#2196F3" opacity={0.2} />
+                    <span className="relative z-10 font-medium text-sm">Step</span>
                   </div>
                 </div>
               </div>

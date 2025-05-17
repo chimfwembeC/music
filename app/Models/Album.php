@@ -54,13 +54,43 @@ class Album extends Model
         return $this->belongsTo(Artist::class);
     }
 
+    /**
+     * Get the genre that owns the album.
+     */
     public function genre()
     {
         return $this->belongsTo(Genre::class);
     }
 
-    public function music()
+    /**
+     * Get the music tracks that belong to the album.
+     */
+    public function tracks()
     {
         return $this->hasMany(Music::class);
+    }
+
+    /**
+     * Get all of the album's favorites.
+     */
+    public function favorites()
+    {
+        return $this->morphMany(Favorite::class, 'favorable');
+    }
+
+    /**
+     * Get all of the album's activities.
+     */
+    public function activities()
+    {
+        return $this->morphMany(UserActivity::class, 'activity');
+    }
+
+    /**
+     * Scope a query to only include published albums.
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true);
     }
 }

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useDarkMode } from "./DarkModeContext";
 
 // Define theme types
-type ThemeVariant = 'earth' | 'kente' | 'ankara' | 'chitenge';
+type ThemeVariant = 'earth' | 'kente' | 'ankara' | 'chitenge' | 'ndebele';
 
 interface AfricanThemeContextType {
   themeVariant: ThemeVariant;
@@ -144,6 +144,24 @@ export const AfricanThemeProvider: React.FC<{ children: ReactNode }> = ({ childr
           background: 'gray-900',
           text: 'gray-100',
           pattern: 'chitenge-indigo-400',
+        },
+      },
+      ndebele: {
+        light: {
+          primary: 'ndebele-red-600',
+          secondary: 'ndebele-blue-500',
+          accent: 'ndebele-yellow-500',
+          background: 'white',
+          text: 'ndebele-black-900',
+          pattern: 'ndebele-black-900',
+        },
+        dark: {
+          primary: 'ndebele-red-500',
+          secondary: 'ndebele-blue-400',
+          accent: 'ndebele-yellow-400',
+          background: 'gray-900',
+          text: 'gray-100',
+          pattern: 'ndebele-red-500',
         },
       },
     };

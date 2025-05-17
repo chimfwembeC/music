@@ -17,7 +17,17 @@ class MusicController extends Controller
      */
     public function index()
     {
-        $musics = Music::with(['artist', 'genre'])->get(); // Fetch music with related artist and genre
+        $musics = [];
+        $user = auth()->user();
+
+        if($user->role === 'artist'){
+            $musics = Music::where('artist_id', $user->artist->id)->with(['artist', 'genre'])->get();
+        }
+        else{
+            $musics = Music::with(['artist', 'genre'])->get();
+        }
+
+        // $musics = Music::with(['artist', 'genre'])->get(); // Fetch music with related artist and genre
         return Inertia::render('Music/Index', [
             'musics' => $musics
         ]);

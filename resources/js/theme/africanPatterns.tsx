@@ -350,10 +350,236 @@ export const ChitengeSpiralPattern: React.FC<PatternProps> = ({
   </svg>
 );
 
+// Ndebele Geometric Pattern - Inspired by South African Ndebele house paintings
+export const NdebeleGeometricPattern: React.FC<PatternProps> = ({
+  className = '',
+  primaryColor = 'currentColor',
+  secondaryColor = 'currentColor',
+  size = 60,
+  opacity = 0.15
+}) => (
+  <svg
+    className={`absolute inset-0 w-full h-full ${className}`}
+    style={{ opacity }}
+    viewBox="0 0 120 120"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <pattern id="ndebele-geometric" x="0" y="0" width={size} height={size} patternUnits="userSpaceOnUse">
+        {/* Outer square border */}
+        <rect
+          x={size/10}
+          y={size/10}
+          width={size*8/10}
+          height={size*8/10}
+          stroke={primaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+
+        {/* Inner square border */}
+        <rect
+          x={size/4}
+          y={size/4}
+          width={size/2}
+          height={size/2}
+          stroke={secondaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+
+        {/* Diagonal lines */}
+        <line
+          x1={size/10}
+          y1={size/10}
+          x2={size/4}
+          y2={size/4}
+          stroke={primaryColor}
+          strokeWidth="1.5"
+        />
+        <line
+          x1={size*9/10}
+          y1={size/10}
+          x2={size*3/4}
+          y2={size/4}
+          stroke={primaryColor}
+          strokeWidth="1.5"
+        />
+        <line
+          x1={size/10}
+          y1={size*9/10}
+          x2={size/4}
+          y2={size*3/4}
+          stroke={primaryColor}
+          strokeWidth="1.5"
+        />
+        <line
+          x1={size*9/10}
+          y1={size*9/10}
+          x2={size*3/4}
+          y2={size*3/4}
+          stroke={primaryColor}
+          strokeWidth="1.5"
+        />
+      </pattern>
+    </defs>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#ndebele-geometric)" />
+  </svg>
+);
+
+// Ndebele Zigzag Pattern - Inspired by traditional Ndebele beadwork and wall art
+export const NdebeleZigzagPattern: React.FC<PatternProps> = ({
+  className = '',
+  primaryColor = 'currentColor',
+  secondaryColor = 'currentColor',
+  size = 50,
+  opacity = 0.15
+}) => (
+  <svg
+    className={`absolute inset-0 w-full h-full ${className}`}
+    style={{ opacity }}
+    viewBox="0 0 100 100"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <pattern id="ndebele-zigzag" x="0" y="0" width={size} height={size} patternUnits="userSpaceOnUse">
+        {/* Horizontal zigzag lines */}
+        <polyline
+          points={`0,${size/4} ${size/5},${size/8} ${size*2/5},${size/4} ${size*3/5},${size/8} ${size*4/5},${size/4} ${size},${size/8}`}
+          stroke={primaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+        <polyline
+          points={`0,${size*3/4} ${size/5},${size*5/8} ${size*2/5},${size*3/4} ${size*3/5},${size*5/8} ${size*4/5},${size*3/4} ${size},${size*5/8}`}
+          stroke={primaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+
+        {/* Vertical zigzag lines */}
+        <polyline
+          points={`${size/4},0 ${size/8},${size/5} ${size/4},${size*2/5} ${size/8},${size*3/5} ${size/4},${size*4/5} ${size/8},${size}`}
+          stroke={secondaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+        <polyline
+          points={`${size*3/4},0 ${size*5/8},${size/5} ${size*3/4},${size*2/5} ${size*5/8},${size*3/5} ${size*3/4},${size*4/5} ${size*5/8},${size}`}
+          stroke={secondaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+      </pattern>
+    </defs>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#ndebele-zigzag)" />
+  </svg>
+);
+
+// Ndebele Triangular Pattern - Inspired by traditional Ndebele house painting
+export const NdebeleTriangularPattern: React.FC<PatternProps> = ({
+  className = '',
+  primaryColor = 'currentColor',
+  secondaryColor = 'currentColor',
+  size = 60,
+  opacity = 0.15
+}) => (
+  <svg
+    className={`absolute inset-0 w-full h-full ${className}`}
+    style={{ opacity }}
+    viewBox="0 0 120 120"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <pattern id="ndebele-triangular" x="0" y="0" width={size} height={size} patternUnits="userSpaceOnUse">
+        {/* Triangular elements */}
+        <path
+          d={`M${size/2},${size/10} L${size/10},${size*9/10} L${size*9/10},${size*9/10} Z`}
+          stroke={primaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+
+        <path
+          d={`M${size/2},${size/4} L${size/4},${size*3/4} L${size*3/4},${size*3/4} Z`}
+          stroke={secondaryColor}
+          strokeWidth="1.5"
+          fill="none"
+        />
+
+        {/* Horizontal lines */}
+        <line
+          x1={size/5}
+          y1={size/2}
+          x2={size*4/5}
+          y2={size/2}
+          stroke={primaryColor}
+          strokeWidth="1.5"
+        />
+
+        <line
+          x1={size/3}
+          y1={size*2/3}
+          x2={size*2/3}
+          y2={size*2/3}
+          stroke={secondaryColor}
+          strokeWidth="1.5"
+        />
+      </pattern>
+    </defs>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#ndebele-triangular)" />
+  </svg>
+);
+
+// Ndebele Step Pattern - Inspired by traditional Ndebele step motifs
+export const NdebeleStepPattern: React.FC<PatternProps> = ({
+  className = '',
+  primaryColor = 'currentColor',
+  secondaryColor = 'currentColor',
+  size = 50,
+  opacity = 0.15
+}) => (
+  <svg
+    className={`absolute inset-0 w-full h-full ${className}`}
+    style={{ opacity }}
+    viewBox="0 0 100 100"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <pattern id="ndebele-step" x="0" y="0" width={size} height={size} patternUnits="userSpaceOnUse">
+        {/* Step pattern */}
+        <path
+          d={`M${size/10},${size/10}
+             H${size*3/10} V${size*3/10}
+             H${size*5/10} V${size*5/10}
+             H${size*7/10} V${size*7/10}
+             H${size*9/10} V${size*9/10}`}
+          stroke={primaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+
+        <path
+          d={`M${size*9/10},${size/10}
+             V${size*3/10} H${size*7/10}
+             V${size*5/10} H${size*5/10}
+             V${size*7/10} H${size*3/10}
+             V${size*9/10} H${size/10}`}
+          stroke={secondaryColor}
+          strokeWidth="2"
+          fill="none"
+        />
+      </pattern>
+    </defs>
+    <rect x="0" y="0" width="100%" height="100%" fill="url(#ndebele-step)" />
+  </svg>
+);
+
 // Export a component that combines multiple patterns for a rich background
 export const AfricanBackground: React.FC<{
   pattern?: 'zigzag' | 'kente' | 'adire' | 'mudcloth' | 'adinkra' | 'tribal' |
-            'chitenge-geometric' | 'chitenge-floral' | 'chitenge-wave' | 'chitenge-spiral';
+            'chitenge-geometric' | 'chitenge-floral' | 'chitenge-wave' | 'chitenge-spiral' |
+            'ndebele-geometric' | 'ndebele-zigzag' | 'ndebele-triangular' | 'ndebele-step';
   primaryColor?: string;
   secondaryColor?: string;
   opacity?: number;
@@ -378,7 +604,13 @@ export const AfricanBackground: React.FC<{
     'chitenge-geometric': ChitengeGeometricPattern,
     'chitenge-floral': ChitengeFloralPattern,
     'chitenge-wave': ChitengeWavePattern,
-    'chitenge-spiral': ChitengeSpiralPattern
+    'chitenge-spiral': ChitengeSpiralPattern,
+
+    // Ndebele patterns
+    'ndebele-geometric': NdebeleGeometricPattern,
+    'ndebele-zigzag': NdebeleZigzagPattern,
+    'ndebele-triangular': NdebeleTriangularPattern,
+    'ndebele-step': NdebeleStepPattern
   };
 
   const PatternComponent = patternMap[pattern];

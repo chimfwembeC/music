@@ -12,6 +12,7 @@ const AfricanThemeToggle: React.FC = () => {
     { value: 'earth', label: 'Earth', description: 'Earthy Sahel tones' },
     { value: 'ankara', label: 'Ankara', description: 'Bold textile prints' },
     { value: 'chitenge', label: 'Chitenge', description: 'East African textiles' },
+    { value: 'ndebele', label: 'Ndebele', description: 'South African geometric' },
   ];
 
   const patternOptions = [
@@ -25,9 +26,13 @@ const AfricanThemeToggle: React.FC = () => {
     { value: 'chitenge-floral', label: 'Chitenge Floral' },
     { value: 'chitenge-wave', label: 'Chitenge Wave' },
     { value: 'chitenge-spiral', label: 'Chitenge Spiral' },
+    { value: 'ndebele-geometric', label: 'Ndebele Geometric' },
+    { value: 'ndebele-zigzag', label: 'Ndebele Zigzag' },
+    { value: 'ndebele-triangular', label: 'Ndebele Triangular' },
+    { value: 'ndebele-step', label: 'Ndebele Step' },
   ];
 
-  const handleThemeChange = (variant: 'earth' | 'kente' | 'ankara' | 'chitenge') => {
+  const handleThemeChange = (variant: 'earth' | 'kente' | 'ankara' | 'chitenge' | 'ndebele') => {
     setThemeVariant(variant);
     setOpen(false);
   };
@@ -48,6 +53,8 @@ const AfricanThemeToggle: React.FC = () => {
         return 'text-ankara-purple-500 dark:text-ankara-purple-400';
       case 'chitenge':
         return 'text-chitenge-indigo-500 dark:text-chitenge-indigo-400';
+      case 'ndebele':
+        return 'text-ndebele-red-600 dark:text-ndebele-red-500';
       default:
         return 'text-kente-gold-500 dark:text-kente-gold-400';
     }
@@ -83,7 +90,7 @@ const AfricanThemeToggle: React.FC = () => {
                 {themeOptions.map((option) => (
                   <button
                     key={option.value}
-                    onClick={() => handleThemeChange(option.value as 'earth' | 'kente' | 'ankara' | 'chitenge')}
+                    onClick={() => handleThemeChange(option.value as 'earth' | 'kente' | 'ankara' | 'chitenge' | 'ndebele')}
                     className={`flex items-center justify-between w-full px-3 py-2 text-left rounded-md ${
                       themeVariant === option.value
                         ? 'bg-gray-100 dark:bg-gray-700'
@@ -101,7 +108,8 @@ const AfricanThemeToggle: React.FC = () => {
                         option.value === 'earth' ? 'bg-clay-500 dark:bg-clay-400' :
                         option.value === 'kente' ? 'bg-kente-gold-500 dark:bg-kente-gold-400' :
                         option.value === 'ankara' ? 'bg-ankara-purple-500 dark:bg-ankara-purple-400' :
-                        'bg-chitenge-indigo-500 dark:bg-chitenge-indigo-400'
+                        option.value === 'chitenge' ? 'bg-chitenge-indigo-500 dark:bg-chitenge-indigo-400' :
+                        'bg-ndebele-red-600 dark:bg-ndebele-red-500'
                       }`} />
                     )}
                   </button>
