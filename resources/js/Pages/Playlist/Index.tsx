@@ -7,6 +7,7 @@ import { Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { useRoute } from '@/Hooks/useRoute';
 import PrimaryButton from '@/Components/PrimaryButton';
+import WithLayout from '@/Components/WithLayout';
 
 interface Props {
   playlists: Playlist[];
@@ -31,7 +32,7 @@ export default function Index({ playlists }: Props) {
   };
 
   return (
-    <AppLayout
+    <WithLayout
       title="Playlists"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -64,8 +65,8 @@ export default function Index({ playlists }: Props) {
               },
               { label: 'Name', key: 'name' },
               { label: 'Creator', key: 'user.name' },
-              { 
-                label: 'Tracks', 
+              {
+                label: 'Tracks',
                 type: 'custom',
                 render: playlist => (
                   <span>{playlist.tracks_count || 0}</span>
@@ -107,6 +108,6 @@ export default function Index({ playlists }: Props) {
           />
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

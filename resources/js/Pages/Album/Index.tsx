@@ -1,5 +1,6 @@
 import PaginatedTable from '@/Components/PaginatedTable';
 import PrimaryButton from '@/Components/PrimaryButton';
+import WithLayout from '@/Components/WithLayout';
 import useRoute from '@/Hooks/useRoute';
 import AppLayout from '@/Layouts/AppLayout';
 import { Album } from '@/types';
@@ -24,7 +25,7 @@ export default function Index({ albums }: Album) {
     });
   };
   return (
-    <AppLayout
+    <WithLayout
       title="Albums"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -94,6 +95,6 @@ export default function Index({ albums }: Album) {
           />
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

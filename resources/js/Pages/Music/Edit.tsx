@@ -2,10 +2,11 @@ import AppLayout from '@/Layouts/AppLayout'
 import React from 'react'
 import UpdateMusicForm from './Components/UpdateMusicForm'
 import SectionBorder from '@/Components/SectionBorder'
+import WithLayout from '@/Components/WithLayout'
 
 export default function Edit({music, albums, genres, artists}) {
   return (
-    <AppLayout title='Update Music' renderHeader={() => (
+    <WithLayout title='Update Music' renderHeader={() => (
         <div>Update Music</div>
     )}>
  <div className="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
@@ -15,6 +16,6 @@ export default function Edit({music, albums, genres, artists}) {
           <SectionBorder />
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   )
 }

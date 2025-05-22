@@ -6,6 +6,7 @@ import { Link } from '@inertiajs/react';
 import { useRoute } from '@/Hooks/useRoute';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import WithLayout from '@/Components/WithLayout';
 
 interface Props {
   playlist: Playlist & {
@@ -16,7 +17,7 @@ interface Props {
 
 export default function Show({ playlist, isOwner }: Props) {
   const route = useRoute();
-  
+
   // Format duration from seconds to MM:SS
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -29,7 +30,7 @@ export default function Show({ playlist, isOwner }: Props) {
   const formattedTotalDuration = formatDuration(totalDuration);
 
   return (
-    <AppLayout
+    <WithLayout
       title={playlist.name}
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -50,19 +51,19 @@ export default function Show({ playlist, isOwner }: Props) {
                   className="w-full h-full object-cover rounded-lg shadow-md"
                 />
               </div>
-              
+
               {/* Playlist Info */}
               <div className="flex flex-col justify-between">
                 <div>
                   <div className="text-sm text-gray-500 dark:text-gray-400 uppercase font-semibold">Playlist</div>
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{playlist.name}</h1>
-                  
+
                   {playlist.description && (
                     <p className="text-gray-600 dark:text-gray-300 mt-2 max-w-2xl">
                       {playlist.description}
                     </p>
                   )}
-                  
+
                   <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
                     <span>Created by {playlist.user?.name}</span>
                     <span className="mx-2">•</span>
@@ -73,13 +74,13 @@ export default function Show({ playlist, isOwner }: Props) {
                     <span>{playlist.is_public ? 'Public' : 'Private'}</span>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2 mt-6">
                   <PrimaryButton className="flex items-center gap-1">
                     <Play size={16} />
                     Play All
                   </PrimaryButton>
-                  
+
                   {isOwner && (
                     <Link href={route('playlists.edit', { id: playlist.id })}>
                       <SecondaryButton className="flex items-center gap-1">
@@ -88,12 +89,12 @@ export default function Show({ playlist, isOwner }: Props) {
                       </SecondaryButton>
                     </Link>
                   )}
-                  
+
                   <SecondaryButton className="flex items-center gap-1">
                     <Download size={16} />
                     Download
                   </SecondaryButton>
-                  
+
                   <SecondaryButton className="flex items-center gap-1">
                     <Share2 size={16} />
                     Share
@@ -101,7 +102,7 @@ export default function Show({ playlist, isOwner }: Props) {
                 </div>
               </div>
             </div>
-            
+
             {/* Tracks List */}
             <div className="px-6 pb-6">
               <table className="w-full mt-4">
@@ -119,17 +120,17 @@ export default function Show({ playlist, isOwner }: Props) {
                 <tbody>
                   {playlist.tracks && playlist.tracks.length > 0 ? (
                     playlist.tracks.map((track, index) => (
-                      <tr 
-                        key={track.id} 
+                      <tr
+                        key={track.id}
                         className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         <td className="py-4 pl-4 text-sm text-gray-500 dark:text-gray-400">{index + 1}</td>
                         <td className="py-4">
                           <div className="flex items-center">
                             {track.image_url && (
-                              <img 
-                                src={`/storage/${track.image_url}`} 
-                                alt={track.title} 
+                              <img
+                                src={`/storage/${track.image_url}`}
+                                alt={track.title}
                                 className="w-10 h-10 mr-3 rounded"
                               />
                             )}
@@ -165,6 +166,6 @@ export default function Show({ playlist, isOwner }: Props) {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

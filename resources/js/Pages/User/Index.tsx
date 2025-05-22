@@ -10,6 +10,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import Modal from '@/Components/Modal';
 import DangerButton from '@/Components/DangerButton';
+import WithLayout from '@/Components/WithLayout';
 
 interface Props {
   users: User[];
@@ -47,7 +48,7 @@ export default function Index({ users }: Props) {
   };
 
   return (
-    <AppLayout
+    <WithLayout
       title="Users"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -88,8 +89,8 @@ export default function Index({ users }: Props) {
               },
               { label: 'Name', key: 'name' },
               { label: 'Email', key: 'email' },
-              { 
-                label: 'Role', 
+              {
+                label: 'Role',
                 type: 'custom',
                 render: user => (
                   <span className="capitalize px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
@@ -157,6 +158,6 @@ export default function Index({ users }: Props) {
           </div>
         </div>
       </Modal>
-    </AppLayout>
+    </WithLayout>
   );
 }

@@ -6,6 +6,8 @@ import { Plus } from 'lucide-react';
 import React from 'react';
 import MusicTable from './Components/MusicTable';
 import { Music } from '@/types';
+import AdminLayout from '@/Layouts/AdminLayout';
+import WithLayout from '@/Components/WithLayout';
 
 interface Props {
   musics: Music[];
@@ -29,7 +31,7 @@ export default function Index({ musics }: Props) {
   };
 
   return (
-    <AppLayout
+    <WithLayout
       title="Music"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -53,6 +55,6 @@ export default function Index({ musics }: Props) {
           />
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

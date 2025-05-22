@@ -6,12 +6,13 @@ import SectionBorder from '@/Components/SectionBorder';
 import { useForm } from '@inertiajs/react';
 import AddMusicForm from './Components/AddMusicForm';
 import { useRoute } from 'ziggy-js';
+import WithLayout from '@/Components/WithLayout';
 
 export default function Create({albums, genres, artists}) {
   const page = useTypedPage();
 
   return (
-    <AppLayout
+    <WithLayout
       title="Add Music"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -26,6 +27,6 @@ export default function Create({albums, genres, artists}) {
           <SectionBorder />
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

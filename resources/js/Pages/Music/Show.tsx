@@ -6,6 +6,7 @@ import axios from 'axios'
 import { Download, Share2 } from 'lucide-react'
 import React, { useState } from 'react'
 import { motion } from 'framer-motion';
+import WithLayout from '@/Components/WithLayout'
 
 
 // Types
@@ -200,7 +201,7 @@ export default function Show({ music }) {
     };
 
     return (
-        <GuestLayout title={"music"}>
+        <WithLayout title={"music"}>
             <div className='h-full w-full px-6 mt-8'>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
@@ -364,6 +365,6 @@ export default function Show({ music }) {
                 message={motionAlert ? motionAlert.message : ''}
                 type={motionAlert ? motionAlert.type : 'success'}
             />
-        </GuestLayout>
+        </WithLayout>
     )
 }

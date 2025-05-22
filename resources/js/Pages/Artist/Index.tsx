@@ -6,6 +6,7 @@ import PaginatedTable from '@/Components/PaginatedTable';
 import { Artist } from '@/types';
 import PrimaryButton from '@/Components/PrimaryButton';
 import useRoute from '@/Hooks/useRoute';
+import WithLayout from '@/Components/WithLayout';
 
 interface Props {
   artists: Artist[];
@@ -24,7 +25,7 @@ export default function Index({ artists }: Props) {
   };
 
   return (
-    <AppLayout
+    <WithLayout
       title="Artists"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -55,7 +56,7 @@ export default function Index({ artists }: Props) {
                 ),
               },
             { label: 'Name', key: 'name' },
-            { label: 'Bio', key: 'bio' },           
+            { label: 'Bio', key: 'bio' },
             // {
             //   label: 'Published',
             //   key: 'is_published',
@@ -91,6 +92,6 @@ export default function Index({ artists }: Props) {
           ]}
         />
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

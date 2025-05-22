@@ -8,6 +8,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import MusicCard from '@/Components/MusicCard';
 import PlaylistCard from '@/Components/PlaylistCard';
 import AlbumCard from '@/Components/AlbumCard';
+import WithLayout from '@/Components/WithLayout';
 
 interface UserData {
   playlists?: Playlist[];
@@ -26,7 +27,7 @@ interface Props {
 
 export default function Show({ user, userData }: Props) {
   const route = useRoute();
-  
+
   // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -38,7 +39,7 @@ export default function Show({ user, userData }: Props) {
   };
 
   return (
-    <AppLayout
+    <WithLayout
       title={`${user.name}'s Profile`}
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -67,7 +68,7 @@ export default function Show({ user, userData }: Props) {
                   </div>
                 )}
               </div>
-              
+
               {/* User Info */}
               <div className="flex flex-col justify-between">
                 <div>
@@ -75,7 +76,7 @@ export default function Show({ user, userData }: Props) {
                     {user.role}
                   </div>
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-1">{user.name}</h1>
-                  
+
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                       <Mail size={16} className="mr-2" />
@@ -85,7 +86,7 @@ export default function Show({ user, userData }: Props) {
                       <Calendar size={16} className="mr-2" />
                       Joined {formatDate(user.created_at)}
                     </div>
-                    
+
                     {user.role === 'listener' && (
                       <>
                         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
@@ -98,7 +99,7 @@ export default function Show({ user, userData }: Props) {
                         </div>
                       </>
                     )}
-                    
+
                     {user.role === 'artist' && userData.artist && (
                       <>
                         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
@@ -117,7 +118,7 @@ export default function Show({ user, userData }: Props) {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2 mt-6">
                   <Link href={route('users.edit', { id: user.id })}>
                     <PrimaryButton className="flex items-center gap-1">
@@ -128,7 +129,7 @@ export default function Show({ user, userData }: Props) {
                 </div>
               </div>
             </div>
-            
+
             {/* User Content Sections */}
             <div className="px-6 pb-6">
               {/* Listener Content */}
@@ -145,7 +146,7 @@ export default function Show({ user, userData }: Props) {
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Favorites */}
                   {userData.favorites && userData.favorites.length > 0 && (
                     <div className="mt-8">
@@ -157,7 +158,7 @@ export default function Show({ user, userData }: Props) {
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Recently Played */}
                   {userData.recentlyPlayed && userData.recentlyPlayed.length > 0 && (
                     <div className="mt-8">
@@ -171,7 +172,7 @@ export default function Show({ user, userData }: Props) {
                   )}
                 </>
               )}
-              
+
               {/* Artist Content */}
               {user.role === 'artist' && userData.artist && (
                 <>
@@ -186,7 +187,7 @@ export default function Show({ user, userData }: Props) {
                       </div>
                     </div>
                   )}
-                  
+
                   {/* Albums */}
                   {userData.albums && userData.albums.length > 0 && (
                     <div className="mt-8">
@@ -204,6 +205,6 @@ export default function Show({ user, userData }: Props) {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

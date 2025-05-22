@@ -1,5 +1,6 @@
 import PaginatedTable from '@/Components/PaginatedTable';
 import PrimaryButton from '@/Components/PrimaryButton';
+import WithLayout from '@/Components/WithLayout';
 import useRoute from '@/Hooks/useRoute';
 import AppLayout from '@/Layouts/AppLayout';
 import { Blog } from '@/types';
@@ -17,7 +18,7 @@ export default function Index({ blogs }: Blog) {
     });
   };
   return (
-    <AppLayout
+    <WithLayout
       title="blogs"
       renderHeader={() => (
         <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
@@ -82,6 +83,6 @@ export default function Index({ blogs }: Blog) {
           />
         </div>
       </div>
-    </AppLayout>
+    </WithLayout>
   );
 }

@@ -1,3 +1,4 @@
+import WithLayout from '@/Components/WithLayout'
 import GuestLayout from '@/Layouts/GuestLayout'
 import { Link } from '@inertiajs/react'
 import { Download, DownloadCloud } from 'lucide-react'
@@ -5,7 +6,7 @@ import React from 'react'
 
 export default function Show({ album }) {
     return (
-        <GuestLayout title={'albums'}>
+        <WithLayout title={'albums'}>
             <div className="h-full w-full px-6 mt-8">
 
                 <div className="">
@@ -97,6 +98,6 @@ export default function Show({ album }) {
                     </div>
                 </div>
             </div>
-        </GuestLayout>
+        </WithLayout>
     )
 }
