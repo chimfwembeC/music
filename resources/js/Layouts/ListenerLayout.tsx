@@ -8,6 +8,7 @@ import AfricanThemeToggle from '@/Components/AfricanThemeToggle';
 import Dropdown from '@/Components/Dropdown';
 import DropdownLink from '@/Components/DropdownLink';
 import ApplicationMark from '@/Components/ApplicationMark';
+import SidebarNowPlaying from '@/Components/SidebarNowPlaying';
 import { router } from '@inertiajs/core';
 import { Music } from '@/types';
 import { ChevronDown, ChevronsDown, Clock3, Heart, LayoutDashboard, LogOut, Menu, Music4 as MusicIcon, Search, Settings, Tag, User, X } from 'lucide-react';
@@ -23,7 +24,8 @@ export default function ListenerLayout({
   children,
 }: PropsWithChildren<ListenerLayoutProps>) {
   const page = useTypedPage();
-  const user = page.props.auth.user;
+  // @ts-ignore - auth is available in the page props
+  const user = page.props.auth?.user;
   const route = useRoute();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -161,7 +163,7 @@ export default function ListenerLayout({
                 >
                   { sidebarOpen
                           ? <Menu className="h-6 w-6" />
-                          : <X className="h-6 w-6" />                                                       
+                          : <X className="h-6 w-6" />
                       }
                 </button>
                 <Link href={route('dashboard')}>
@@ -332,7 +334,7 @@ export default function ListenerLayout({
                 </svg>
                 Quick Actions
               </h4>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 <button
                   onClick={() =>
                     (window.location.href = getRoute(
@@ -360,7 +362,7 @@ export default function ListenerLayout({
                 </button>
                 <button
                   onClick={() =>
-                    (window.location.href = getRoute('discover', 'dashboard'))
+                    getRoute('playlists.create', 'dashboard')
                   }
                   className="flex items-center justify-center px-3 py-2 border border-indigo-300 dark:border-indigo-700 text-sm font-medium rounded-md shadow-sm text-indigo-700 dark:text-indigo-300 bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-200"
                 >
@@ -383,92 +385,13 @@ export default function ListenerLayout({
               </div>
 
               {/* Now Playing Preview */}
-              <div className="mt-6 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h5 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
-                  Now Playing
-                </h5>
-                {page.props.currentlyPlaying ? (
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-md flex-shrink-0 mr-3 overflow-hidden">
-                      <img
-                        src={
-                          page.props.currentlyPlaying.image_url ||
-                          '/images/default-track.jpg'
-                        }
-                        alt={page.props.currentlyPlaying.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                        {page.props.currentlyPlaying.title}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {page.props.currentlyPlaying.artist?.name ||
-                          'Unknown Artist'}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        // This would be handled by a global audio player context in a real app
-                        const audio = document.getElementById(
-                          'global-audio-player',
-                        ) as HTMLAudioElement;
-                        if (audio) {
-                          if (audio.paused) {
-                            audio.play();
-                          } else {
-                            audio.pause();
-                          }
-                        }
-                      }}
-                      className="ml-2 p-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-md flex-shrink-0 mr-3"></div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                        Select a track
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        Start listening
-                      </p>
-                    </div>
-                    <button className="ml-2 p-1.5 rounded-full bg-gray-400 text-white cursor-not-allowed opacity-50">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                )}
+              <div className="mt-6 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between p-3 pb-1">
+                  <h5 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Now Playing
+                  </h5>
+                </div>
+                <SidebarNowPlaying />
               </div>
             </div>
           </div>
