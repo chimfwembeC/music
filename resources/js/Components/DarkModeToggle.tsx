@@ -63,21 +63,27 @@ const DarkModeToggle = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-400 dark:border-purple-800 rounded-lg shadow-lg"
+                        className="absolute z-50 right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-400 dark:border-purple-800 rounded-lg shadow-lg"
                     >
                         <ul className="py-2 dark:text-gray-200">
+                            <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                                Manage Modes    
+                            </div>
+                            <div className="border-b border-gray-400 dark:border-purple-700" />
                             <li
                                 onClick={() => handleThemeChange("light")}
                                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                             >
                                 <Sun size={18} className="text-yellow-500" /> Light Mode
                             </li>
+                            <div className="border-b border-gray-400 dark:border-purple-700" />
                             <li
                                 onClick={() => handleThemeChange("dark")}
                                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                             >
                                 <MoonStar size={18} className="text-gray-700 dark:text-gray-500" /> Dark Mode
                             </li>
+                            <div className="border-b border-gray-400 dark:border-purple-700" />
                             <li
                                 onClick={() => handleThemeChange("system")}
                                 className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"

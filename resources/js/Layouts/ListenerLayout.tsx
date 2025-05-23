@@ -10,6 +10,7 @@ import DropdownLink from '@/Components/DropdownLink';
 import ApplicationMark from '@/Components/ApplicationMark';
 import { router } from '@inertiajs/core';
 import { Music } from '@/types';
+import { ChevronDown, ChevronsDown, Clock3, Heart, LayoutDashboard, LogOut, Menu, Music4 as MusicIcon, Search, Settings, Tag, User, X } from 'lucide-react';
 
 interface ListenerLayoutProps {
   title: string;
@@ -21,7 +22,7 @@ export default function ListenerLayout({
   renderHeader,
   children,
 }: PropsWithChildren<ListenerLayoutProps>) {
-  const page = useTypedPage<{ currentlyPlaying?: Music }>();
+  const page = useTypedPage();
   const user = page.props.auth.user;
   const route = useRoute();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -47,7 +48,12 @@ export default function ListenerLayout({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const sidebar = document.getElementById('sidebar');
-      if (isMobile && sidebarOpen && sidebar && !sidebar.contains(event.target as Node)) {
+      if (
+        isMobile &&
+        sidebarOpen &&
+        sidebar &&
+        !sidebar.contains(event.target as Node)
+      ) {
         setSidebarOpen(false);
       }
     };
@@ -66,82 +72,49 @@ export default function ListenerLayout({
     {
       name: 'Dashboard',
       route: 'listener.dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-      )
+      icon: <LayoutDashboard className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Recently Played',
       route: 'history',
       fallback: 'dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      )
+      icon: <Clock3 className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Favorites',
       route: 'favorites',
       fallback: 'dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-      )
+      icon: <Heart className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Playlists',
       route: 'playlists',
       fallback: 'dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-        </svg>
-      )
+      icon: <MusicIcon className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Following',
       route: 'following',
       fallback: 'dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-      )
+      icon: <User className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Discover',
       route: 'discover',
       fallback: 'dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      )
+      icon: <Search className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Genres',
       route: 'genres',
       fallback: 'dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-        </svg>
-      )
+      icon: <Tag className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Settings',
       route: 'profile.show',
       fallback: 'dashboard',
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      )
+      icon: <Settings className='h-5 w-5 mr-2' />,
     },
   ];
 
@@ -169,8 +142,15 @@ export default function ListenerLayout({
       <Head title={title} />
 
       {/* Header */}
-      <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav
+        className={classNames(
+          'bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex-1 transition-all duration-300 ease-in-out',
+          {
+            'md:ml-64': !isMobile || sidebarOpen,
+          },
+        )}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-gray-400 dark:border-purple-700">
           <div className="flex justify-between h-16">
             <div className="flex">
               {/* Logo and Sidebar Toggle */}
@@ -179,14 +159,10 @@ export default function ListenerLayout({
                   onClick={() => setSidebarOpen(!sidebarOpen)}
                   className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out mr-2"
                 >
-                  <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d={sidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-                    />
-                  </svg>
+                  { sidebarOpen
+                          ? <Menu className="h-6 w-6" />
+                          : <X className="h-6 w-6" />                                                       
+                      }
                 </button>
                 <Link href={route('dashboard')}>
                   <ApplicationMark className="block h-9 w-auto" />
@@ -200,9 +176,11 @@ export default function ListenerLayout({
                   className={classNames(
                     'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out',
                     {
-                      'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100': route().current('listener.dashboard'),
-                      'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700': !route().current('listener.dashboard'),
-                    }
+                      'border-indigo-400 dark:border-indigo-600 text-gray-900 dark:text-gray-100':
+                        route().current('listener.dashboard'),
+                      'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-700':
+                        !route().current('listener.dashboard'),
+                    },
                   )}
                 >
                   Dashboard
@@ -214,7 +192,7 @@ export default function ListenerLayout({
               <div className="flex items-center space-x-3">
                 {/* Theme toggles */}
                 <DarkModeToggle />
-                <AfricanThemeToggle />
+                {/* <AfricanThemeToggle /> */}
               </div>
 
               {/* Settings Dropdown */}
@@ -226,22 +204,11 @@ export default function ListenerLayout({
                     <span className="inline-flex rounded-md">
                       <button
                         type="button"
-                        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150"
+                        className="inline-flex items-center px-3 py-3 border border-purple-700 text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150"
                       >
                         {user?.name}
 
-                        <svg
-                          className="ml-2 -mr-0.5 h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                          />
-                        </svg>
+                       <ChevronDown className="ml-2 -mr-0.5 h-4 w-4" />
                       </button>
                     </span>
                   )}
@@ -251,15 +218,25 @@ export default function ListenerLayout({
                     Manage Account
                   </div>
 
+                  <div className="border-b border-gray-400 dark:border-purple-700" />
+
                   <DropdownLink href={route('profile.show')}>
-                    Profile
+                    <div className="flex">
+                    <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </div>
                   </DropdownLink>
 
-                  <div className="border-t border-gray-200 dark:border-gray-600"></div>
+                  <div className="border-b border-gray-400 dark:border-purple-700" />
 
                   {/* Authentication */}
                   <form onSubmit={logout}>
-                    <DropdownLink as="button">Log Out</DropdownLink>
+                    <DropdownLink as="button">
+                        <div className="flex">
+                            <LogOut className="h-4 w-4 mr-2" />
+                        Log Out
+                        </div>
+                    </DropdownLink>
                   </form>
                 </Dropdown>
               </div>
@@ -271,40 +248,32 @@ export default function ListenerLayout({
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
               >
-                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d={sidebarOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-                  />
-                </svg>
+                <Menu className="h-6 w-6" />
               </button>
             </div>
           </div>
         </div>
+        {/* Page Heading */}
+        {/* {renderHeader ? (
+          <header className="bg-white dark:bg-gray-800 shadow">
+            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+              {renderHeader()}
+            </div>
+          </header>
+        ) : null} */}
       </nav>
-
-      {/* Page Heading */}
-      {renderHeader ? (
-        <header className="bg-white dark:bg-gray-800 shadow">
-          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            {renderHeader()}
-          </div>
-        </header>
-      ) : null}
 
       <div className="flex">
         {/* Sidebar */}
         <div
           id="sidebar"
           className={classNames(
-            'fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 overflow-y-auto transition-transform duration-300 ease-in-out transform border-r border-gray-200 dark:border-gray-700 pt-16',
+            'fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-gray-800 overflow-y-auto transition-transform duration-300 ease-in-out transform border-r border-gray-200 dark:border-purple-700',
             {
               'translate-x-0': sidebarOpen,
               '-translate-x-full': !sidebarOpen,
               'md:translate-x-0': !isMobile,
-            }
+            },
           )}
         >
           <div className="px-4 py-4">
@@ -324,8 +293,8 @@ export default function ListenerLayout({
             </div>
 
             {/* Navigation */}
-            <nav className="space-y-1 px-2">
-              {navigationItems.map((item) => (
+            <nav className="space-y-1 px-2 h-60 overflow-y-auto">
+              {navigationItems.map(item => (
                 <Link
                   key={item.name}
                   href={getRoute(item.route, item.fallback)}
@@ -347,27 +316,67 @@ export default function ListenerLayout({
               <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500"></div>
 
               <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
                 </svg>
                 Quick Actions
               </h4>
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => window.location.href = getRoute('playlists.create', 'dashboard')}
+                  onClick={() =>
+                    (window.location.href = getRoute(
+                      'playlists.create',
+                      'dashboard',
+                    ))
+                  }
                   className="flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-200"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
                   </svg>
                   New Playlist
                 </button>
                 <button
-                  onClick={() => window.location.href = getRoute('discover', 'dashboard')}
+                  onClick={() =>
+                    (window.location.href = getRoute('discover', 'dashboard'))
+                  }
                   className="flex items-center justify-center px-3 py-2 border border-indigo-300 dark:border-indigo-700 text-sm font-medium rounded-md shadow-sm text-indigo-700 dark:text-indigo-300 bg-white dark:bg-gray-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-200"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
                   </svg>
                   Explore
                 </button>
@@ -375,12 +384,17 @@ export default function ListenerLayout({
 
               {/* Now Playing Preview */}
               <div className="mt-6 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h5 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Now Playing</h5>
+                <h5 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                  Now Playing
+                </h5>
                 {page.props.currentlyPlaying ? (
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-md flex-shrink-0 mr-3 overflow-hidden">
                       <img
-                        src={page.props.currentlyPlaying.image_url || '/images/default-track.jpg'}
+                        src={
+                          page.props.currentlyPlaying.image_url ||
+                          '/images/default-track.jpg'
+                        }
                         alt={page.props.currentlyPlaying.title}
                         className="w-full h-full object-cover"
                       />
@@ -390,13 +404,16 @@ export default function ListenerLayout({
                         {page.props.currentlyPlaying.title}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                        {page.props.currentlyPlaying.artist?.name || 'Unknown Artist'}
+                        {page.props.currentlyPlaying.artist?.name ||
+                          'Unknown Artist'}
                       </p>
                     </div>
                     <button
                       onClick={() => {
                         // This would be handled by a global audio player context in a real app
-                        const audio = document.getElementById('global-audio-player') as HTMLAudioElement;
+                        const audio = document.getElementById(
+                          'global-audio-player',
+                        ) as HTMLAudioElement;
                         if (audio) {
                           if (audio.paused) {
                             audio.play();
@@ -407,8 +424,19 @@ export default function ListenerLayout({
                       }}
                       className="ml-2 p-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -416,12 +444,27 @@ export default function ListenerLayout({
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-gray-200 dark:bg-gray-600 rounded-md flex-shrink-0 mr-3"></div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">Select a track</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">Start listening</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                        Select a track
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        Start listening
+                      </p>
                     </div>
                     <button className="ml-2 p-1.5 rounded-full bg-gray-400 text-white cursor-not-allowed opacity-50">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -432,12 +475,14 @@ export default function ListenerLayout({
         </div>
 
         {/* Main Content */}
-        <main className={classNames(
-          'flex-1 transition-all duration-300 ease-in-out',
-          {
-            'md:ml-64': !isMobile || sidebarOpen,
-          }
-        )}>
+        <main
+          className={classNames(
+            'flex-1 transition-all duration-300 ease-in-out',
+            {
+              'md:ml-64': !isMobile || sidebarOpen,
+            },
+          )}
+        >
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg border-t-4 border-indigo-600 relative">
@@ -445,9 +490,7 @@ export default function ListenerLayout({
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500"></div>
 
                 {/* Content */}
-                <div className="p-6">
-                  {children}
-                </div>
+                <div className="p-6">{children}</div>
               </div>
             </div>
           </div>
