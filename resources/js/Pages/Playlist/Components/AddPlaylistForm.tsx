@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useForm } from '@inertiajs/react';
-import { useRoute } from '@/Hooks/useRoute';
+
 import useTypedPage from '@/Hooks/useTypedPage';
 import FormSection from '@/Components/FormSection';
 import InputLabel from '@/Components/InputLabel';
@@ -10,6 +10,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import Checkbox from '@/Components/Checkbox';
 import { Music } from '@/types';
+import useRoute from '@/Hooks/useRoute';
 
 interface Props {
   tracks: Music[];
@@ -80,7 +81,7 @@ export default function AddPlaylistForm({ tracks }: Props) {
     <FormSection
       title="Create Playlist"
       description="Create a new playlist to organize your favorite tracks."
-      onSubmit={createPlaylist}
+      onSubmit={createPlaylist}      
       renderActions={() => (
         <>
           <SecondaryButton

@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Playlist, Music } from '@/types';
 import { Play, Clock, Download, Share2, Heart, Edit, MoreHorizontal } from 'lucide-react';
 import { Link } from '@inertiajs/react';
-import { useRoute } from '@/Hooks/useRoute';
+import useRoute from '@/Hooks/useRoute';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import WithLayout from '@/Components/WithLayout';

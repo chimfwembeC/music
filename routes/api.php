@@ -68,6 +68,19 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/listener-dashboard', [App\Http\Controllers\Api\ListenerDashboardController::class, 'index'])
         ->middleware('role:listener');
 
+    // Listener Dashboard specific endpoints
+    Route::prefix('listener')->middleware('role:listener')->group(function () {
+        Route::get('/recently-played', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getRecentlyPlayedApi']);
+        Route::post('/recently-played', [App\Http\Controllers\Api\ListenerDashboardController::class, 'updateRecentlyPlayed']);
+        Route::get('/most-played', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getMostPlayedApi']);
+        Route::get('/favorites', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getFavoriteTracksApi']);
+        Route::get('/followed-artists', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getFollowedArtistsApi']);
+        Route::get('/playlists', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getUserPlaylistsApi']);
+        Route::get('/activity', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getListeningActivityApi']);
+        Route::get('/recommendations', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getRecommendedTracksApi']);
+        Route::get('/stats', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getListeningStatsApi']);
+    });
+
     Route::get('/artist-dashboard', [App\Http\Controllers\Api\ArtistDashboardController::class, 'index'])
         ->middleware('role:artist');
 

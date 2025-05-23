@@ -1,56 +1,9 @@
-type DateTime = string;
+// This file is deprecated. Use types from types/inertia.d.ts and types/index.d.ts instead.
+// Keeping this file for backward compatibility.
 
-export type Nullable<T> = T | null;
+import { Nullable, Team, User, Auth, InertiaSharedProps } from './types/inertia';
 
-export interface Team {
-    id: number;
-    name: string;
-    personal_team: boolean;
-    created_at: DateTime;
-    updated_at: DateTime;
-}
-
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    role: string;
-    current_team_id: Nullable<number>;
-    profile_photo_path: Nullable<string>;
-    profile_photo_url: string;
-    two_factor_enabled: boolean;
-    email_verified_at: Nullable<DateTime>;
-    created_at: DateTime;
-    updated_at: DateTime;
-}
-
-export interface Auth {
-    user: Nullable<
-        User & {
-            all_teams?: Team[];
-            current_team?: Team;
-        }
-    >;
-}
-
-export type InertiaSharedProps<T = {}> = T & {
-    jetstream: {
-        canCreateTeams: boolean;
-        canManageTwoFactorAuthentication: boolean;
-        canUpdatePassword: boolean;
-        canUpdateProfileInformation: boolean;
-        flash: any;
-        hasAccountDeletionFeatures: boolean;
-        hasApiFeatures: boolean;
-        hasTeamFeatures: boolean;
-        hasTermsAndPrivacyPolicyFeature: boolean;
-        managesProfilePhotos: boolean;
-        hasEmailVerification: boolean;
-    };
-    auth: Auth;
-    errorBags: any;
-    errors: any;
-};
+export { Nullable, Team, User, Auth, InertiaSharedProps };
 
 export interface Session {
     id: number;
@@ -129,13 +82,13 @@ export interface Music {
     is_featured: boolean;
     created_at: string;
     updated_at: string;
-  
+
     // Optional related models (if eager-loaded from backend)
     artist?: Artist;
     genre?: Genre;
     album?: Album;
   }
-  
+
 export interface Blog {
     id: number;
     title: string;

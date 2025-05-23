@@ -36,6 +36,28 @@ Route::middleware([
         ->name('listener.dashboard')
         ->middleware('role:listener');
 
+    // Listener Dashboard specific endpoints
+    Route::prefix('listener')->middleware(['auth:sanctum', 'role:listener'])->group(function () {
+        Route::get('/recently-played', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getRecentlyPlayedApi'])->name('listener.recently-played');
+        Route::post('/recently-played', [App\Http\Controllers\Api\ListenerDashboardController::class, 'updateRecentlyPlayed'])->name('listener.update-recently-played');
+        Route::get('/most-played', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getMostPlayedApi'])->name('listener.most-played');
+        Route::get('/favorites', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getFavoriteTracksApi'])->name('listener.favorites');
+        Route::get('/followed-artists', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getFollowedArtistsApi'])->name('listener.followed-artists');
+        Route::get('/playlists', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getUserPlaylistsApi'])->name('listener.playlists');
+        Route::get('/activity', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getListeningActivityApi'])->name('listener.activity');
+        Route::get('/recommendations', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getRecommendedTracksApi'])->name('listener.recommendations');
+        Route::get('/stats', [App\Http\Controllers\Api\ListenerDashboardController::class, 'getListeningStatsApi'])->name('listener.stats');
+
+        // Add fallback route to handle any API errors
+        Route::fallback(function () {
+            return response()->json([
+                'success' => false,
+                'message' => 'API endpoint not found',
+                'data' => []
+            ], 404);
+        });
+    });
+
     Route::get('/artist-dashboard', App\Http\Controllers\DashboardController::class)
         ->name('artist.dashboard')
         ->middleware('role:artist');
@@ -109,6 +131,16 @@ Route::get('/search/recent', [SearchController::class, 'getRecentSearches'])->na
 Route::post('/music/{id}/download', [MusicController::class, 'trackDownload']);
 Route::post('/music/{id}/share', [MusicController::class, 'trackShare']);
 Route::get('/albums/{id}/download', [AlbumController::class, 'downloadAlbum']);
+
+// Track interactions for web
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/tracks/{id}/view', [App\Http\Controllers\Api\TrackInteractionController::class, 'recordView'])->name('tracks.view');
+    Route::put('/tracks/{id}/view-duration', [App\Http\Controllers\Api\TrackInteractionController::class, 'updateViewDuration'])->name('tracks.view-duration');
+    Route::post('/tracks/{id}/like', [App\Http\Controllers\Api\TrackInteractionController::class, 'toggleLike'])->name('tracks.like');
+    Route::get('/tracks/{id}/like', [App\Http\Controllers\Api\TrackInteractionController::class, 'checkLike'])->name('tracks.check-like');
+    Route::get('/tracks/{id}/stats', [App\Http\Controllers\Api\TrackInteractionController::class, 'getStats'])->name('tracks.stats');
+    Route::post('/tracks/{id}/favorite', [MusicController::class, 'toggleFavorite'])->name('tracks.favorite');
+});
 
 
 

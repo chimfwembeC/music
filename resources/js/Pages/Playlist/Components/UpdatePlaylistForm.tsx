@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
-import { useRoute } from '@/Hooks/useRoute';
+import useRoute from '@/Hooks/useRoute';
 import FormSection from '@/Components/FormSection';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';

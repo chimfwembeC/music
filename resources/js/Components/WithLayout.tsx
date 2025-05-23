@@ -35,7 +35,7 @@ const route = useRoute();
     if (requireAuth && !user) {
       Inertia.visit(route('login'));
     }
-    
+
     // If user is authenticated but not allowed to access this page, redirect to dashboard
     if (user && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
       Inertia.visit(route('dashboard'));
@@ -54,17 +54,17 @@ const route = useRoute();
 
   // Choose the appropriate layout based on user role
   let Layout = AppLayout;
-  
+
   if (user) {
     // Dynamically import the layout based on user role
     try {
       if (user.role === 'admin') {
         // We'll use AppLayout as a fallback if the specific layout isn't available
-        Layout = AdminLayout || AppLayout;
+        Layout = AdminLayout;
       } else if (user.role === 'artist') {
-        Layout = ArtistLayout || AppLayout;
+        Layout = ArtistLayout;
       } else if (user.role === 'listener') {
-        Layout = ListenerLayout|| AppLayout;
+        Layout = ListenerLayout;
       }
     } catch (error) {
       console.error('Failed to load layout:', error);

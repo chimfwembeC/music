@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Music, Artist, Playlist, ListeningActivity, ListeningStats } from '@/types';
+import React, { useState, useEffect } from 'react';
+import { Music, Artist } from '@/types';
 import MusicCard from '@/Components/MusicCard';
 import ArtistCard from '@/Components/ArtistCard';
 import PlaylistCard from '@/Components/PlaylistCard';
@@ -7,6 +7,46 @@ import EmptyState from '@/Components/EmptyState';
 import LoadingState from '@/Components/LoadingState';
 import SectionHeader from '@/Components/SectionHeader';
 import { Line } from 'react-chartjs-2';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+
+// Define types that are not exported from @/types
+export interface Playlist {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  user_id: number;
+  is_public: boolean;
+  image_url?: string;
+  created_at: string;
+  updated_at: string;
+  user?: any;
+  tracks?: Music[];
+  tracks_count?: number;
+}
+
+export interface ListeningActivity {
+  date: string;
+  count: number;
+}
+
+export interface ListeningStats {
+  total_plays: number;
+  unique_tracks: number;
+  total_listening_time: number;
+  total_listening_time_formatted: string;
+  most_listened_genre?: {
+    id: number;
+    name: string;
+    listen_count: number;
+  };
+  most_listened_artist?: {
+    id: number;
+    name: string;
+    listen_count: number;
+  };
+}
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -41,17 +81,338 @@ interface ListenerDashboardProps {
 }
 
 const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
-  recentlyPlayed,
-  mostPlayed,
-  favoriteTracks,
-  followedArtists,
-  playlists,
-  listeningActivity,
-  recommendedTracks,
-  listeningStats,
+  recentlyPlayed: initialRecentlyPlayed,
+  mostPlayed: initialMostPlayed,
+  favoriteTracks: initialFavoriteTracks,
+  followedArtists: initialFollowedArtists,
+  playlists: initialPlaylists,
+  listeningActivity: initialListeningActivity,
+  recommendedTracks: initialRecommendedTracks,
+  listeningStats: initialListeningStats,
 }) => {
-  // In a real app, this would be set based on data loading state
-  const [isLoading] = useState(false);
+  // State for data
+  const [recentlyPlayed, setRecentlyPlayed] = useState<Music[]>(initialRecentlyPlayed || []);
+  const [mostPlayed, setMostPlayed] = useState<Music[]>(initialMostPlayed || []);
+  const [favoriteTracks, setFavoriteTracks] = useState<Music[]>(initialFavoriteTracks || []);
+  const [followedArtists, setFollowedArtists] = useState<Artist[]>(initialFollowedArtists || []);
+  const [playlists, setPlaylists] = useState<Playlist[]>(initialPlaylists || []);
+  const [listeningActivity, setListeningActivity] = useState<ListeningActivity[]>(initialListeningActivity || []);
+  const [recommendedTracks, setRecommendedTracks] = useState<Music[]>(initialRecommendedTracks || []);
+  const [listeningStats, setListeningStats] = useState<ListeningStats | null>(initialListeningStats || null);
+
+  // Loading states
+  const [isLoading, setIsLoading] = useState({
+    recentlyPlayed: !initialRecentlyPlayed || initialRecentlyPlayed.length === 0,
+    mostPlayed: !initialMostPlayed || initialMostPlayed.length === 0,
+    favorites: !initialFavoriteTracks || initialFavoriteTracks.length === 0,
+    artists: !initialFollowedArtists || initialFollowedArtists.length === 0,
+    playlists: !initialPlaylists || initialPlaylists.length === 0,
+    activity: !initialListeningActivity || initialListeningActivity.length === 0,
+    recommendations: !initialRecommendedTracks || initialRecommendedTracks.length === 0,
+    stats: !initialListeningStats
+  });
+
+  // Currently playing track
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<Music | null>(null);
+  const [audioPlayer, setAudioPlayer] = useState<HTMLAudioElement | null>(null);
+
+  // Initialize audio player
+  useEffect(() => {
+    const player = new Audio();
+    player.addEventListener('ended', handlePlaybackEnded);
+    setAudioPlayer(player);
+
+    return () => {
+      player.pause();
+      player.removeEventListener('ended', handlePlaybackEnded);
+    };
+  }, []);
+
+  // Handle playback ended
+  const handlePlaybackEnded = () => {
+    setCurrentlyPlaying(null);
+  };
+
+  // Play a track
+  const playTrack = (track: Music) => {
+    if (audioPlayer) {
+      // Stop current playback if any
+      audioPlayer.pause();
+
+      // Set the new track
+      setCurrentlyPlaying(track);
+
+      // Update the audio source and play
+      audioPlayer.src = `/storage/${track.file_url}`;
+      audioPlayer.play().catch(error => {
+        console.error('Error playing track:', error);
+        toast.error('Failed to play track. Please try again.');
+      });
+
+      // Update recently played list if not already in the first position
+      if (!recentlyPlayed.length || recentlyPlayed[0].id !== track.id) {
+        const updatedRecentlyPlayed = [track, ...recentlyPlayed.filter(t => t.id !== track.id)].slice(0, 8);
+        setRecentlyPlayed(updatedRecentlyPlayed);
+
+        // Update the backend
+        updateRecentlyPlayed(track.id);
+      }
+    }
+  };
+
+  // Fetch data functions
+  const fetchRecentlyPlayed = async () => {
+    setIsLoading(prev => ({ ...prev, recentlyPlayed: true }));
+    try {
+      const response = await axios.get('/listener/recently-played');
+      if (response.data && response.data.data) {
+        setRecentlyPlayed(response.data.data);
+        console.log('Fetched recently played tracks:', response.data.data.length);
+      } else {
+        console.error('Invalid response format for recently played tracks:', response.data);
+        setRecentlyPlayed([]);
+      }
+    } catch (error) {
+      console.error('Error fetching recently played tracks:', error);
+      toast.error('Failed to load recently played tracks');
+      setRecentlyPlayed([]);
+    } finally {
+      setIsLoading(prev => ({ ...prev, recentlyPlayed: false }));
+    }
+  };
+
+  const fetchMostPlayed = async () => {
+    setIsLoading(prev => ({ ...prev, mostPlayed: true }));
+    try {
+      const response = await axios.get('/listener/most-played');
+      if (response.data && response.data.data) {
+        setMostPlayed(response.data.data);
+        console.log('Fetched most played tracks:', response.data.data.length);
+      } else {
+        console.error('Invalid response format for most played tracks:', response.data);
+        setMostPlayed([]);
+      }
+    } catch (error) {
+      console.error('Error fetching most played tracks:', error);
+      toast.error('Failed to load most played tracks');
+      setMostPlayed([]);
+    } finally {
+      setIsLoading(prev => ({ ...prev, mostPlayed: false }));
+    }
+  };
+
+  const fetchFavorites = async () => {
+    setIsLoading(prev => ({ ...prev, favorites: true }));
+    try {
+      const response = await axios.get('/listener/favorites');
+      if (response.data && response.data.data) {
+        setFavoriteTracks(response.data.data);
+        console.log('Fetched favorite tracks:', response.data.data.length);
+      } else {
+        console.error('Invalid response format for favorite tracks:', response.data);
+        setFavoriteTracks([]);
+      }
+    } catch (error) {
+      console.error('Error fetching favorite tracks:', error);
+      toast.error('Failed to load favorite tracks');
+      setFavoriteTracks([]);
+    } finally {
+      setIsLoading(prev => ({ ...prev, favorites: false }));
+    }
+  };
+
+  const fetchFollowedArtists = async () => {
+    setIsLoading(prev => ({ ...prev, artists: true }));
+    try {
+      const response = await axios.get('/listener/followed-artists');
+      if (response.data && response.data.data) {
+        setFollowedArtists(response.data.data);
+        console.log('Fetched followed artists:', response.data.data.length);
+      } else {
+        console.error('Invalid response format for followed artists:', response.data);
+        setFollowedArtists([]);
+      }
+    } catch (error) {
+      console.error('Error fetching followed artists:', error);
+      toast.error('Failed to load followed artists');
+      setFollowedArtists([]);
+    } finally {
+      setIsLoading(prev => ({ ...prev, artists: false }));
+    }
+  };
+
+  const fetchPlaylists = async () => {
+    setIsLoading(prev => ({ ...prev, playlists: true }));
+    try {
+      const response = await axios.get('/listener/playlists');
+      if (response.data && response.data.data) {
+        setPlaylists(response.data.data);
+        console.log('Fetched playlists:', response.data.data.length);
+      } else {
+        console.error('Invalid response format for playlists:', response.data);
+        setPlaylists([]);
+      }
+    } catch (error) {
+      console.error('Error fetching playlists:', error);
+      toast.error('Failed to load playlists');
+      setPlaylists([]);
+    } finally {
+      setIsLoading(prev => ({ ...prev, playlists: false }));
+    }
+  };
+
+  const fetchListeningActivity = async () => {
+    setIsLoading(prev => ({ ...prev, activity: true }));
+    try {
+      const response = await axios.get('/listener/activity');
+      if (response.data && response.data.data) {
+        setListeningActivity(response.data.data);
+        console.log('Fetched listening activity:', response.data.data.length, 'days');
+      } else {
+        console.error('Invalid response format for listening activity:', response.data);
+        setListeningActivity([]);
+      }
+    } catch (error) {
+      console.error('Error fetching listening activity:', error);
+      toast.error('Failed to load listening activity');
+      setListeningActivity([]);
+    } finally {
+      setIsLoading(prev => ({ ...prev, activity: false }));
+    }
+  };
+
+  const fetchRecommendations = async () => {
+    setIsLoading(prev => ({ ...prev, recommendations: true }));
+    try {
+      const response = await axios.get('/listener/recommendations');
+      if (response.data && response.data.data) {
+        setRecommendedTracks(response.data.data);
+        console.log('Fetched recommendations:', response.data.data.length);
+      } else {
+        console.error('Invalid response format for recommendations:', response.data);
+        setRecommendedTracks([]);
+      }
+    } catch (error) {
+      console.error('Error fetching recommendations:', error);
+      toast.error('Failed to load recommendations');
+      setRecommendedTracks([]);
+    } finally {
+      setIsLoading(prev => ({ ...prev, recommendations: false }));
+    }
+  };
+
+  const fetchListeningStats = async () => {
+    setIsLoading(prev => ({ ...prev, stats: true }));
+    try {
+      const response = await axios.get('/listener/stats');
+      if (response.data && response.data.data) {
+        setListeningStats(response.data.data);
+        console.log('Fetched listening stats');
+      } else {
+        console.error('Invalid response format for listening stats:', response.data);
+        setListeningStats(null);
+      }
+    } catch (error) {
+      console.error('Error fetching listening stats:', error);
+      toast.error('Failed to load listening stats');
+      setListeningStats(null);
+    } finally {
+      setIsLoading(prev => ({ ...prev, stats: false }));
+    }
+  };
+
+  // Update recently played in the backend
+  const updateRecentlyPlayed = async (trackId: number) => {
+    try {
+      const response = await axios.post('/listener/recently-played', { track_id: trackId });
+      console.log('Updated recently played track:', trackId, response.data.data.message);
+      return response.data.data;
+    } catch (error) {
+      console.error('Error updating recently played:', error);
+      toast.error('Failed to update recently played');
+      throw error;
+    }
+  };
+
+  // Refresh all data
+  const refreshData = () => {
+    fetchRecentlyPlayed();
+    fetchMostPlayed();
+    fetchFavorites();
+    fetchFollowedArtists();
+    fetchPlaylists();
+    fetchListeningActivity();
+    fetchRecommendations();
+    fetchListeningStats();
+  };
+
+  // Fetch data on component mount if not provided
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Create an array of fetch promises
+        const fetchPromises = [];
+
+        if (!initialRecentlyPlayed || initialRecentlyPlayed.length === 0) {
+          fetchPromises.push(fetchRecentlyPlayed());
+        }
+
+        if (!initialMostPlayed || initialMostPlayed.length === 0) {
+          fetchPromises.push(fetchMostPlayed());
+        }
+
+        if (!initialFavoriteTracks || initialFavoriteTracks.length === 0) {
+          fetchPromises.push(fetchFavorites());
+        }
+
+        if (!initialFollowedArtists || initialFollowedArtists.length === 0) {
+          fetchPromises.push(fetchFollowedArtists());
+        }
+
+        if (!initialPlaylists || initialPlaylists.length === 0) {
+          fetchPromises.push(fetchPlaylists());
+        }
+
+        if (!initialListeningActivity || initialListeningActivity.length === 0) {
+          fetchPromises.push(fetchListeningActivity());
+        }
+
+        if (!initialRecommendedTracks || initialRecommendedTracks.length === 0) {
+          fetchPromises.push(fetchRecommendations());
+        }
+
+        if (!initialListeningStats) {
+          fetchPromises.push(fetchListeningStats());
+        }
+
+        // Execute all fetch promises in parallel
+        await Promise.allSettled(fetchPromises);
+        console.log('All data fetch operations completed');
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
+    fetchData();
+
+    // Set a timeout to clear any stuck loading states after 10 seconds
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading({
+        recentlyPlayed: false,
+        mostPlayed: false,
+        favorites: false,
+        artists: false,
+        playlists: false,
+        activity: false,
+        recommendations: false,
+        stats: false
+      });
+      console.log('Loading timeout reached, clearing all loading states');
+    }, 10000);
+
+    // Clean up the timeout when component unmounts
+    return () => clearTimeout(loadingTimeout);
+  }, []);
   // Prepare data for the listening activity chart
   const chartData = {
     labels: listeningActivity?.map(item => {
@@ -92,15 +453,81 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
     },
   };
 
+  // Update the currently playing track in the global state
+  useEffect(() => {
+    if (currentlyPlaying) {
+      // In a real app, this would update a global state or context
+      // For now, we'll just log it
+      console.log('Currently playing:', currentlyPlaying);
+
+      // You would typically dispatch an action or update context here
+      // For example: dispatch({ type: 'SET_CURRENTLY_PLAYING', payload: currentlyPlaying });
+    }
+  }, [currentlyPlaying]);
+
   return (
     <div>
+      {/* Toast notifications */}
+      <div id="toast-container" className="fixed top-4 right-4 z-50">
+        {/* Toast notifications will be rendered here by react-hot-toast */}
+      </div>
+
+      {/* Audio player (hidden) */}
+      {currentlyPlaying && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-2 z-40 flex items-center">
+          <div className="flex items-center flex-1">
+            <div className="w-12 h-12 rounded-md overflow-hidden mr-3">
+              <img
+                src={currentlyPlaying.image_url || '/images/default-track.jpg'}
+                alt={currentlyPlaying.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900 dark:text-gray-100">{currentlyPlaying.title}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{currentlyPlaying.artist?.name}</p>
+            </div>
+          </div>
+          <div className="flex items-center">
+            <button
+              onClick={() => {
+                if (audioPlayer) {
+                  if (audioPlayer.paused) {
+                    audioPlayer.play();
+                  } else {
+                    audioPlayer.pause();
+                  }
+                }
+              }}
+              className="p-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+          {/* Refresh button */}
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={refreshData}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              Refresh Data
+            </button>
+          </div>
           {/* Listening Stats */}
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
             <SectionHeader title="Your Listening Stats" />
 
-            {isLoading ? (
+            {isLoading.stats ? (
               <LoadingState message="Loading your stats..." />
             ) : !listeningStats ? (
               <EmptyState
@@ -152,7 +579,7 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
           <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
             <SectionHeader title="Listening Activity" />
 
-            {isLoading ? (
+            {isLoading.activity ? (
               <LoadingState message="Loading your activity data..." />
             ) : !listeningActivity || listeningActivity.length === 0 ? (
               <EmptyState
@@ -179,7 +606,7 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
               viewAllText="View History"
             />
 
-            {isLoading ? (
+            {isLoading.recentlyPlayed ? (
               <LoadingState message="Loading your recently played tracks..." />
             ) : !recentlyPlayed || recentlyPlayed.length === 0 ? (
               <EmptyState
@@ -198,8 +625,12 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
               />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {recentlyPlayed.map((track) => (
-                  <MusicCard key={`recent-${track.id}`} music={track} />
+                {recentlyPlayed?.map((track) => (
+                  <MusicCard
+                    key={`recent-${track.id}`}
+                    music={track}
+                    onPlay={playTrack}
+                  />
                 ))}
               </div>
             )}
@@ -212,7 +643,7 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
               viewAllLink="/most-played"
             />
 
-            {isLoading ? (
+            {isLoading.mostPlayed ? (
               <LoadingState message="Loading your most played tracks..." />
             ) : !mostPlayed || mostPlayed.length === 0 ? (
               <EmptyState
@@ -227,7 +658,11 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {mostPlayed.map((track) => (
-                  <MusicCard key={`most-${track.id}`} music={track} />
+                  <MusicCard
+                    key={`most-${track.id}`}
+                    music={track}
+                    onPlay={playTrack}
+                  />
                 ))}
               </div>
             )}
@@ -240,7 +675,7 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
               viewAllLink="/favorites"
             />
 
-            {isLoading ? (
+            {isLoading.favorites ? (
               <LoadingState message="Loading your favorite tracks..." />
             ) : !favoriteTracks || favoriteTracks.length === 0 ? (
               <EmptyState
@@ -259,7 +694,11 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {favoriteTracks.map((track) => (
-                  <MusicCard key={`fav-${track.id}`} music={track} />
+                  <MusicCard
+                    key={`fav-${track.id}`}
+                    music={track}
+                    onPlay={playTrack}
+                  />
                 ))}
               </div>
             )}
@@ -272,7 +711,7 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
               viewAllLink="/following"
             />
 
-            {isLoading ? (
+            {isLoading.artists ? (
               <LoadingState message="Loading artists you follow..." />
             ) : !followedArtists || followedArtists.length === 0 ? (
               <EmptyState
@@ -314,7 +753,7 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
               </button>
             </SectionHeader>
 
-            {isLoading ? (
+            {isLoading.playlists ? (
               <LoadingState message="Loading your playlists..." />
             ) : !playlists || playlists.length === 0 ? (
               <EmptyState
@@ -347,7 +786,7 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
               viewAllText="Discover More"
             />
 
-            {isLoading ? (
+            {isLoading.recommendations ? (
               <LoadingState message="Finding recommendations for you..." />
             ) : !recommendedTracks || recommendedTracks.length === 0 ? (
               <EmptyState
@@ -366,7 +805,11 @@ const ListenerDashboard: React.FC<ListenerDashboardProps> = ({
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {recommendedTracks.map((track) => (
-                  <MusicCard key={`rec-${track.id}`} music={track} />
+                  <MusicCard
+                    key={`rec-${track.id}`}
+                    music={track}
+                    onPlay={playTrack}
+                  />
                 ))}
               </div>
             )}

@@ -5,7 +5,7 @@ import PaginatedTable from '@/Components/PaginatedTable';
 import { Pencil, Trash2, PlusCircle, Eye } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
-import { useRoute } from '@/Hooks/useRoute';
+import useRoute from '@/Hooks/useRoute';
 import PrimaryButton from '@/Components/PrimaryButton';
 import WithLayout from '@/Components/WithLayout';
 

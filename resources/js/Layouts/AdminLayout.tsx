@@ -1,4 +1,9 @@
-import React, { PropsWithChildren, ReactNode, useState, useEffect } from 'react';
+import React, {
+  PropsWithChildren,
+  ReactNode,
+  useState,
+  useEffect,
+} from 'react';
 import { Link, Head } from '@inertiajs/react';
 import useTypedPage from '@/Hooks/useTypedPage';
 import useRoute from '@/Hooks/useRoute';
@@ -11,8 +16,21 @@ import ApplicationMark from '@/Components/ApplicationMark';
 import { router } from '@inertiajs/core';
 import axios from 'axios';
 import {
-  LayoutDashboard, Users, Music, Disc, User, Tag, BarChart3, Settings,
-  Menu, X, ChevronDown, LogOut, Bell, Search, Loader2
+  LayoutDashboard,
+  Users,
+  Music,
+  Disc,
+  User,
+  Tag,
+  BarChart3,
+  Settings,
+  Menu,
+  X,
+  ChevronDown,
+  LogOut,
+  Bell,
+  Search,
+  Loader2,
 } from 'lucide-react';
 
 interface PlatformStats {
@@ -48,7 +66,9 @@ export default function AdminLayout({
   const route = useRoute();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [platformStats, setPlatformStats] = useState<PlatformStats | null>(propsPlatformStats || null);
+  const [platformStats, setPlatformStats] = useState<PlatformStats | null>(
+    propsPlatformStats || null,
+  );
   const [loading, setLoading] = useState(!propsPlatformStats);
 
   // Fetch platform stats if not provided as props
@@ -80,7 +100,7 @@ export default function AdminLayout({
         total_playlists: 0,
         total_comments: 0,
         new_users_today: 0,
-        new_tracks_today: 0
+        new_tracks_today: 0,
       });
     } finally {
       setLoading(false);
@@ -107,7 +127,12 @@ export default function AdminLayout({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const sidebar = document.getElementById('admin-sidebar');
-      if (isMobile && sidebarOpen && sidebar && !sidebar.contains(event.target as Node)) {
+      if (
+        isMobile &&
+        sidebarOpen &&
+        sidebar &&
+        !sidebar.contains(event.target as Node)
+      ) {
         setSidebarOpen(false);
       }
     };
@@ -127,49 +152,49 @@ export default function AdminLayout({
       name: 'Dashboard',
       route: 'admin.dashboard',
       fallback: 'dashboard',
-      icon: <LayoutDashboard className="h-5 w-5 mr-2" />
+      icon: <LayoutDashboard className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Users',
       route: 'users.index',
       fallback: 'dashboard',
-      icon: <Users className="h-5 w-5 mr-2" />
+      icon: <Users className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Music',
       route: 'tracks.index',
       fallback: 'dashboard',
-      icon: <Music className="h-5 w-5 mr-2" />
+      icon: <Music className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Albums',
       route: 'albums.index',
       fallback: 'dashboard',
-      icon: <Disc className="h-5 w-5 mr-2" />
+      icon: <Disc className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Artists',
       route: 'artists.index',
       fallback: 'dashboard',
-      icon: <User className="h-5 w-5 mr-2" />
+      icon: <User className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Genres',
       route: 'genres.index',
       fallback: 'dashboard',
-      icon: <Tag className="h-5 w-5 mr-2" />
+      icon: <Tag className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Blogs',
       route: 'blogs.index',
       fallback: 'dashboard',
-      icon: <BarChart3 className="h-5 w-5 mr-2" />
+      icon: <BarChart3 className="h-5 w-5 mr-2" />,
     },
     {
       name: 'Profile',
       route: 'profile.show',
       fallback: 'dashboard',
-      icon: <Settings className="h-5 w-5 mr-2" />
+      icon: <Settings className="h-5 w-5 mr-2" />,
     },
   ];
 
@@ -197,8 +222,17 @@ export default function AdminLayout({
       <Head title={title} />
 
       {/* Header */}
-      <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav
+        className={classNames(
+          'fixed top-0 right-0 z-50 w-full md:left-64',
+          'bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 shadow-sm transition-all duration-300 ease-in-out',
+          {
+            'left-64': !isMobile && sidebarOpen,
+            'left-0': isMobile || !sidebarOpen,
+          },
+        )}
+      >
+        <div className="px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex justify-between h-16">
             <div className="flex">
               {/* Logo and Sidebar Toggle */}
@@ -206,6 +240,7 @@ export default function AdminLayout({
                 <button
                   onClick={() => setSidebarOpen(!sidebarOpen)}
                   className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out mr-2"
+                  aria-label="Toggle sidebar"
                 >
                   {sidebarOpen ? (
                     <X className="h-6 w-6" />
@@ -216,11 +251,13 @@ export default function AdminLayout({
                 <Link href={route('dashboard')}>
                   <ApplicationMark className="block h-9 w-auto" />
                 </Link>
-                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">Admin</span>
+                <span className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-100">
+                  Admin
+                </span>
               </div>
             </div>
 
-            <div className="hidden sm:flex sm:items-center sm:ml-6">
+            <div className="hidden sm:flex sm:items-center">
               {/* Search */}
               <div className="relative mr-4">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -287,11 +324,19 @@ export default function AdminLayout({
               </div>
             </div>
 
-            {/* Mobile menu button */}
+            {/* Mobile menu button and theme toggles */}
             <div className="flex items-center sm:hidden">
+              {/* Theme toggles on mobile */}
+              <div className="flex items-center space-x-2 mr-2">
+                <DarkModeToggle />
+                <AfricanThemeToggle />
+              </div>
+
+              {/* Mobile sidebar toggle */}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out"
+                aria-label="Toggle sidebar"
               >
                 {sidebarOpen ? (
                   <X className="h-6 w-6" />
@@ -304,16 +349,18 @@ export default function AdminLayout({
         </div>
       </nav>
 
-      {/* Page Heading */}
-      {renderHeader ? (
-        <header className="bg-white dark:bg-gray-800 shadow">
-          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-            {renderHeader()}
-          </div>
-        </header>
-      ) : null}
+      {/* Page Heading - with proper spacing for fixed header */}
+      <div className="pt-16">
+        {renderHeader ? (
+          <header className="bg-white dark:bg-gray-800 shadow">
+            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+              {renderHeader()}
+            </div>
+          </header>
+        ) : null}
+      </div>
 
-      <div className="flex">
+      <div className="flex pt-4">
         {/* Sidebar */}
         <div
           id="admin-sidebar"
@@ -323,7 +370,7 @@ export default function AdminLayout({
               'translate-x-0': sidebarOpen,
               '-translate-x-full': !sidebarOpen,
               'md:translate-x-0': !isMobile,
-            }
+            },
           )}
         >
           <div className="px-4 py-4">
@@ -344,7 +391,7 @@ export default function AdminLayout({
 
             {/* Navigation */}
             <nav className="space-y-1 px-2">
-              {navigationItems.map((item) => (
+              {navigationItems.map(item => (
                 <Link
                   key={item.name}
                   href={getRoute(item.route, item.fallback)}
@@ -382,26 +429,32 @@ export default function AdminLayout({
                 ) : (
                   <>
                     <div className="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Users</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Users
+                      </div>
                       <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {platformStats?.total_users?.toLocaleString() || '0'}
                       </div>
-                      {platformStats?.new_users_today && platformStats.new_users_today > 0 && (
-                        <div className="text-xs text-green-500">
-                          +{platformStats.new_users_today} today
-                        </div>
-                      )}
+                      {platformStats?.new_users_today &&
+                        platformStats.new_users_today > 0 && (
+                          <div className="text-xs text-green-500">
+                            +{platformStats.new_users_today} today
+                          </div>
+                        )}
                     </div>
                     <div className="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Tracks</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Tracks
+                      </div>
                       <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {platformStats?.total_tracks?.toLocaleString() || '0'}
                       </div>
-                      {platformStats?.new_tracks_today && platformStats.new_tracks_today > 0 && (
-                        <div className="text-xs text-green-500">
-                          +{platformStats.new_tracks_today} today
-                        </div>
-                      )}
+                      {platformStats?.new_tracks_today &&
+                        platformStats.new_tracks_today > 0 && (
+                          <div className="text-xs text-green-500">
+                            +{platformStats.new_tracks_today} today
+                          </div>
+                        )}
                     </div>
                   </>
                 )}
@@ -420,13 +473,17 @@ export default function AdminLayout({
                 ) : (
                   <>
                     <div className="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Artists</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Artists
+                      </div>
                       <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {platformStats?.artist_count?.toLocaleString() || '0'}
                       </div>
                     </div>
                     <div className="bg-white dark:bg-gray-700 p-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Plays</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Plays
+                      </div>
                       <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {platformStats?.total_plays?.toLocaleString() || '0'}
                       </div>
@@ -439,12 +496,14 @@ export default function AdminLayout({
         </div>
 
         {/* Main Content */}
-        <main className={classNames(
-          'flex-1 transition-all duration-300 ease-in-out',
-          {
-            'md:ml-64': !isMobile || sidebarOpen,
-          }
-        )}>
+        <main
+          className={classNames(
+            'flex-1 transition-all duration-300 ease-in-out pt-4',
+            {
+              'md:ml-64': !isMobile && sidebarOpen,
+            },
+          )}
+        >
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg border-t-4 border-purple-600 relative">
@@ -452,9 +511,7 @@ export default function AdminLayout({
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-500 via-red-500 to-purple-500"></div>
 
                 {/* Content */}
-                <div className="p-6">
-                  {children}
-                </div>
+                <div className="p-6">{children}</div>
               </div>
             </div>
           </div>
